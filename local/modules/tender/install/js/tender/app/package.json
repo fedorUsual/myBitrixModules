@@ -1,0 +1,5 @@
+{
+  "devDependencies": {
+    "@bitrix/cli": "^3.3.9"
+  }
+}

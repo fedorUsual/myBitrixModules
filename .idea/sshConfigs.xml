@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="SshConfigs">
+    <configs>
+      <sshConfig authType="PASSWORD" host="62.152.34.69" id="a8c8f3b9-f84c-4d14-92fe-820fd1af4bfd" port="62625" customName="tandem_test" nameFormat="CUSTOM" username="root" useOpenSSHConfig="true">
+        <option name="customName" value="tandem_test" />
+      </sshConfig>
+      <sshConfig authType="PASSWORD" host="188.187.116.127" id="8ff97fb9-14a6-47cb-a66c-72599796788f" port="62326" customName="new_tandem_boy" nameFormat="CUSTOM" username="root" useOpenSSHConfig="true">
+        <option name="customName" value="new_tandem_boy" />
+      </sshConfig>
+    </configs>
+  </component>
+</project>

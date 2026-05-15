@@ -1,0 +1,84 @@
+[
+  {
+    "0": 15,
+    "1": {
+      "DEAL": {
+        "UF_CRM_1741163698": "fedor060190@gmail.com",
+        "UF_CRM_1740740404421": [
+          "resource|370|20.11.2025 10:00:00|7200|\u0417\u0430\u0431\u0440\u043e\u043d\u0438\u0440\u043e\u0432\u0430\u0442\u044c \u043d\u0430 2 \u0447\u0430\u0441\u0430"
+        ]
+      }
+    },
+    "2": {
+      "from_url": "https:\/\/tk.tandem-consult.ru\/knowledge\/booking\/skhemaofisa\/?IFRAME=Y&IFRAME_TYPE=SIDE_SLIDER",
+      "from_domain": "tk.tandem-consult.ru",
+      "IFRAME": "Y",
+      "IFRAME_TYPE": "SIDE_SLIDER"
+    },
+    "3": "275",
+    "USER": "275"
+  },
+  {
+    "0": 16,
+    "1": {
+      "": {
+        "": null
+      },
+      "DYNAMIC_189": {
+        "UF_CRM_16_1736877163822": "1132",
+        "UF_CRM_16_1736877338401": "hohol1232@yandex.ru",
+        "UF_CRM_67ADEAA8CF473": "1144",
+        "UF_CRM_16_1714387756": "433",
+        "UF_CRM_16_1714387581": "432",
+        "UF_CRM_67B84094439F0": "1136",
+        "UF_CRM_67B840942E481": "\u041f\u043e\u043f\u043e\u043b\u0430\u043c",
+        "UF_CRM_16_1714394036": "1000",
+        "UF_CRM_67B840943BD3D": "1138",
+        "UF_CRM_67B8409434936": "1130",
+        "UF_CRM_16_1737634256520": "1223322323",
+        "UF_CRM_67B49F3C2A0C6": [
+          "1129"
+        ],
+        "UF_CRM_4_1685275184": "\u041e\u0418\u0418\u041b\u0420-4343",
+        "UF_CRM_67C480A020A54": "27.11.2025",
+        "UF_CRM_67ADF03EAB582": "22.11.2025",
+        "UF_CRM_67ADF03EA3D64": "30.11.2025",
+        "UF_CRM_67B841E0741F2": "07.12.2025",
+        "UF_CRM_67B8409402125": "\u043d\u0438\u043a\u0430\u043a\u043e\u0439",
+        "UF_CRM_4_1683983025": "\u0444\u0443\u0443\u0443\u0443",
+        "UF_CRM_4_1683982946": [
+          {
+            "name": "yunsvk6gnu8ju4e72of45udlxgb13d61.docx",
+            "size": "17020",
+            "type": "application\/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            "description": "",
+            "tmp_name": "\/home\/bitrix\/www\/upload\/bizproc_wf\/930\/a7k2fgdxakvd4sr0uceug3jopx1bzzs0\/yunsvk6gnu8ju4e72of45udlxgb13d61.docx",
+            "external_id": "bbba929151604df90d65e19c62dbc1cb"
+          }
+        ],
+        "UF_CRM_67ADEEC286372": [
+          {
+            "name": "act_by_X3.docx",
+            "size": "22506",
+            "type": "application\/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            "description": "",
+            "tmp_name": "\/home\/bitrix\/www\/upload\/crm\/1ae\/gv5e6na6aqhik5s6qia1kubhcxuxk6dm.docx",
+            "external_id": "208bed1826f1f225c016854a7c3c68d2"
+          }
+        ],
+        "UF_CRM_67C956FF650AB": []
+      },
+      "COMPANY": {
+        "TITLE": "New company"
+      }
+    },
+    "2": {
+      "from_url": "https:\/\/tk.tandem-consult.ru\/knowledge\/baza_znaniy_itr\/stranitsastati_jzru\/?IFRAME=Y&IFRAME_TYPE=SIDE_SLIDER",
+      "from_domain": "tk.tandem-consult.ru",
+      "IFRAME": "Y",
+      "IFRAME_TYPE": "SIDE_SLIDER"
+    },
+    "3": "275",
+    "USER": "275"
+  }
+]

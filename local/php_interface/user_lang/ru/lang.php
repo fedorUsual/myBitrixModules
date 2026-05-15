@@ -1,0 +1,7 @@
+<?php
+$MESS['/bitrix/modules/tasks/lang/ru/classes/general/tasknotifications.php']['TASKS_TASK_EXPIRED_RESPONSIBLE_MESSAGE_N'] = 'Задача #TASK_URL_BEGIN##TASK_TITLE##URL_END# просрочена. Завершите задачу или передвиньте срок.';
+$MESS['/bitrix/modules/tasks/lang/ru/classes/general/tasknotifications.php']['TASKS_TASK_EXPIRED_SOON_RESPONSIBLE_MESSAGE_N'] = 'Задача #TASK_URL_BEGIN##TASK_TITLE##URL_END# завтра в #DEADLINE_TIME# будет просрочена. Завершите задачу или передвиньте срок в течение суток.';
+$MESS['/bitrix/modules/tasks/lang/ru/lib/integration/im/notification.php']['TASKS_TASK_EXPIRED_RESPONSIBLE_MESSAGE_N'] = 'Задача #TASK_URL_BEGIN##TASK_TITLE##URL_END# просрочена. Завершите задачу или передвиньте срок.';
+$MESS['/bitrix/modules/tasks/lang/ru/lib/integration/im/notification.php']['TASKS_TASK_EXPIRED_SOON_RESPONSIBLE_MESSAGE_N'] = 'Задача #TASK_URL_BEGIN##TASK_TITLE##URL_END# завтра в #DEADLINE_TIME# будет просрочена. Завершите задачу или передвиньте срок в течение суток.';
+//$MESS['/bitrix/modules/intranet/lang/ru/public_bitrix24/.superleft.menu_ext.php']['MENU_AUTOMATION_SECTION'] = 'Бизнес-процессы';
+$MESS['/bitrix/modules/intranet/lang/ru/lib/Site/Sections/AutomationSection.php']['AUTOMATION_SECTION_ROOT_ITEM_TITLE'] = 'Бизнес-процессы';
