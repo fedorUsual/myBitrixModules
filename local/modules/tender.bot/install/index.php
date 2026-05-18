@@ -18,10 +18,10 @@ if (file_exists($_SERVER["DOCUMENT_ROOT"].'/local/vendor/autoload.php')) {
 
 // 2. Если модуль не установлен, регистрируем классы вручную (дублируем PSR-4)
 Loader::registerAutoLoadClasses(null, [
-    'Tender\Bot\Controller\AjaxController' => '/local/modules/tender.bot/lib/Controller/AjaxController.php',
-    'Tender\Bot\Controller\AppController'  => '/local/modules/tender.bot/lib/Controller/AppController.php',
-    'Tender\Bot\Telegram'                  => '/local/modules/tender.bot/lib/Telegram.php',
-    'Tender\Bot\Handler'                   => '/local/modules/tender.bot/lib/Handler.php',
+    'Tender\Bot\Controller\AjaxController' => '/local/modules/faleev.tender.bot/lib/Controller/AjaxController.php',
+    'Tender\Bot\Controller\AppController'  => '/local/modules/faleev.tender.bot/lib/Controller/AppController.php',
+    'Tender\Bot\Telegram'                  => '/local/modules/faleev.tender.bot/lib/Telegram.php',
+    'Tender\Bot\Handler'                   => '/local/modules/faleev.tender.bot/lib/Handler.php',
 ]);
 
 try {

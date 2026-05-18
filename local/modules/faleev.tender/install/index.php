@@ -2,13 +2,20 @@
 use Bitrix\Main\ModuleManager;
 use Bitrix\Main\EventManager;
 
-class tender extends CModule // Имя класса обычно совпадает с ID модуля в нижнем регистре
+class faleev_tender extends CModule // Имя класса обычно совпадает с ID модуля в нижнем регистре
 {
-    var $MODULE_ID = 'tender';
-    var $MODULE_VERSION = '1.0.0';
-    var $MODULE_VERSION_DATE = '2026-10-10 10:00:00';
-    var $MODULE_NAME = 'Faleev Tender SPA';
-    var $MODULE_DESCRIPTION = 'React-приложение на D7 роутинге';
+    public $MODULE_ID = 'faleev.tender';
+	public $MODULE_VERSION = '1.0.0';
+	public $MODULE_VERSION_DATE = '2026-10-10 10:00:00';
+    public $MODULE_NAME = 'Faleev Tender SPA';
+    public $MODULE_DESCRIPTION = 'React-приложение на D7 роутинге';
+
+	public function __construct()
+	{
+		$arModuleVersion = [];
+
+		include __DIR__ . '/version.php';
+	}
 
     public function DoInstall()
     {
@@ -30,14 +37,14 @@ class tender extends CModule // Имя класса обычно совпада�
         
         // Сделки
         $eventManager->registerEventHandler(
-            'crm', 'OnAfterCrmDealAdd', 
-            $this->MODULE_ID, '\Tender\Handlers\Crm', 'onDealCreate'
+            'crm', 'OnAfterCrmDealAdd',
+	        $this->MODULE_ID, '\Tender\Handlers\Crm', 'onDealCreate'
         );
 
         // Смарт-процессы
         $eventManager->registerEventHandler(
-            'crm', 'OnAfterCrmDynamicItemAdd', 
-            $this->MODULE_ID, '\Tender\Handlers\Crm', 'onSmartProcessCreate'
+            'crm', 'OnCrmDynamicItemAdd',
+	        $this->MODULE_ID, '\Tender\Handlers\LogHandler', 'onDynamicAdd'
         );
     }
 
@@ -45,6 +52,6 @@ class tender extends CModule // Имя класса обычно совпада�
     {
         $eventManager = EventManager::getInstance();
         $eventManager->unRegisterEventHandler('crm', 'OnAfterCrmDealAdd', $this->MODULE_ID);
-        $eventManager->unRegisterEventHandler('crm', 'OnAfterCrmDynamicItemAdd', $this->MODULE_ID);
+        $eventManager->unRegisterEventHandler('crm', 'OnCrmDynamicItemAdd', $this->MODULE_ID);
     }
 }

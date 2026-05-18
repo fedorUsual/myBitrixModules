@@ -1,5 +1,5 @@
 <?php
-namespace Tender\Controller;
+namespace Faleev\Tender\Controller;
 
 use Bitrix\Main\Config\Option;
 use Bitrix\Main\Engine\Controller;
@@ -10,7 +10,7 @@ use Bitrix\Main\Application;
 
 class AppController extends Controller
 {
-	protected static string $moduleId = 'tender';
+	protected static string $moduleId = 'faleev.tender';
     public function configureActions()
     {
         return [
@@ -30,7 +30,7 @@ class AppController extends Controller
     public function renderAction()
     {
         $documentRoot = Application::getDocumentRoot();
-        $interfacePath = $documentRoot . '/local/modules/tender/frontend/index.php';
+        $interfacePath = $documentRoot . '/local/modules/faleev.faleev.tender/frontend/index.php';
 
         if (file_exists($interfacePath)) {
             ob_start();
@@ -72,8 +72,8 @@ class AppController extends Controller
         }
 
         $eventManager = EventManager::getInstance();
-        $moduleId = 'tender';
-        $handlerClass = "\\Tender\\Handlers\\LogHandler";
+        $moduleId = 'faleev.faleev.tender';
+        $handlerClass = "\\Faleev\\Faleev\\Tender\\Handlers\\LogHandler";
 
         $events = [
             "OnAfterCrmDynamicItemAdd_" . $entityTypeId => "onAfterAdd",

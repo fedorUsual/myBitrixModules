@@ -1,22 +1,21 @@
 <?php
-namespace Tender\Handlers;
+namespace Faleev\Tender\Handlers;
 
 use Bitrix\Crm\Item;
 use Bitrix\Crm\Item\Dynamic;
 use Bitrix\Crm\Service\Container;
-use Bitrix\Main\ArgumentNullException;
 use Bitrix\Main\Config\Option;
+use Bitrix\Main\Diag\Debug;
 use Bitrix\Main\Event;
 use Bitrix\Main\Loader;
 use Bitrix\Main\Web\HttpClient;
-use Bitrix\Main\Diag\Debug;
 use Exception;
-use Tender\Config;
+use Faleev\Tender\Config;
 use Throwable;
 
 class LogHandler
 {
-	protected static string $module_id = "tender";
+	protected static string $module_id = "faleev.tender";
     protected static bool $isProcessing = false;
 
     public static function onAfterUpdate($event)
@@ -173,11 +172,11 @@ class LogHandler
         }
     }
 
-	public static function newHandler(Event $event)
+	public static function onDynamicAdd(Event $event)
 	{
 		/** @var Dynamic $item */
 		$item = $event->getParameter('item');
-		$itemId = $item->getParameter('id');
+		$itemId = $item->getId();
 		file_put_contents($_SERVER['DOCUMENT_ROOT'] . '/local/test.json', json_encode([
 			'new Handler',
 			$item->getData(),

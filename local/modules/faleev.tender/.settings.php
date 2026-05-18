@@ -2,7 +2,7 @@
 return [
     'controllers' => [
         'value' => [
-            'defaultNamespace' => '\\Tender\\Controller',
+            'defaultNamespace' => '\\Faleev\\Tender\\Controller',
         ],
         'readonly' => true,
     ],

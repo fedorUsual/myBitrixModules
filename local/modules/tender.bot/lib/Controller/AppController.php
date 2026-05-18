@@ -25,7 +25,7 @@ class AppController extends Controller
 
     /**
      * Стандартный Action для вывода интерфейса
-     * URL: /api/tender-bot/view/
+     * URL: /api/faleev.tender-bot/view/
      */
     public function renderAction()
     {
@@ -43,7 +43,7 @@ class AppController extends Controller
         \Bitrix\Main\UI\Extension::load(['html_editor', 'ui.design-tokens']);
         
         $asset = \Bitrix\Main\Page\Asset::getInstance();
-        $asset->addJs('/local/modules/tender.bot/assets/js/editor_fix.js');
+        $asset->addJs('/local/modules/faleev.tender.bot/assets/js/editor_fix.js');
       }
     }
 

@@ -1,29 +1,26 @@
 <?php
-namespace Tender\Controller;
+namespace Faleev\Tender\Controller;
 
 use Bitrix\Crm\Service\Container;
 use Bitrix\Disk\Driver;
 use Bitrix\Disk\File;
-use Bitrix\Main\Application;
-use Bitrix\Main\ArgumentNullException;
 use Bitrix\Main\Config\Option;
 use Bitrix\Main\Engine\Controller;
 use Bitrix\Main\Engine\ActionFilter;
 use Bitrix\Main\Loader;
 use Bitrix\Main\Diag\Debug;
 use Bitrix\Main\Web\HttpClient;
-use Bitrix\Crm\Service;
 use Exception;
 use OpenSpout\Writer\XLSX\Writer;
 use OpenSpout\Common\Entity\Row;
 use OpenSpout\Common\Entity\Cell;
-use Tender\Config;
-use Tender\Handlers\LogHandler;
+use Faleev\Tender\Config;
+use Faleev\Tender\Handlers\LogHandler;
 use Throwable;
 
 class AjaxController extends Controller
 {
-	protected static string $moduleId = 'tender';
+	protected static string $moduleId = 'faleev.tender';
 
     /**
      * Конфигурация фильтров для экшенов
@@ -75,7 +72,7 @@ class AjaxController extends Controller
 
         if ($itemId > 0) {
             Loader::includeModule('crm');
-            Loader::includeModule('tender');
+            Loader::includeModule('faleev.tender');
 
             // Передаем ID в Handler. Теперь он найдет Item 3057 и отправит в ИИ.
             LogHandler::onAfterUpdate($itemId);
@@ -131,7 +128,7 @@ class AjaxController extends Controller
             // 2. ЗАПОЛНЕНИЕ ТЕКСТОВЫХ ПОЛЕЙ
             $item->set($options['field_summary'], $data['summary_text'] ?? '');
             $item->set($options['field_error'], $isCompleted ? "" : ($data['error_message'] ?? ''));
-	        // 3. ОБРАБОТКА ФАЙЛА (СИЛОВОЙ МЕТОД SQL)
+	        // 3. ОБРАБОТКА ФАЙЛА
 			if (!empty($data['table_tender'])) {
 				require_once($_SERVER["DOCUMENT_ROOT"] . "/local/vendor/autoload.php");
 				$diskFileId = $this->generateExcelAndSaveToDisk($data['table_tender'], $tenderId);
@@ -139,8 +136,20 @@ class AjaxController extends Controller
 					$diskFile = File::loadById($diskFileId);
 					if ($diskFile) {
 						$bFileId = (int)$diskFile->getFileId();
+						$bFile = \CFile::MakeFileArray($bFileId);
 						$fieldName = $options['field_table_tender'];
-						$item->set($fieldName, $bFileId);
+
+						$fileField = $factory->getFieldsCollection()->getField($fieldName);
+						$fileUploader = $container->getFileUploader();
+						$checkResult = $fileUploader->checkFile($fileField, $bFile);
+						if (!$checkResult->isSuccess())
+						{
+							throw new Exception(implode(',' . PHP_EOL, $checkResult->getErrorMessages()));
+						}
+
+						$savedFileId = $fileUploader->saveFilePersistently($fileField, $bFile);
+
+						$item->set($fieldName, $savedFileId);
 					}
 				}
 			}
@@ -249,8 +258,8 @@ class AjaxController extends Controller
             $tmpName = tempnam(sys_get_temp_dir(), 'tender_');
             file_put_contents($tmpName, $fileContent);
 
-            $storage = \Bitrix\Disk\Driver::getInstance()->getStorageByCommonId('shared_files_s1')
-                       ?? \Bitrix\Disk\Driver::getInstance()->getStorageByUserId(1);
+            $storage = Driver::getInstance()->getStorageByCommonId('shared_files_s1')
+                       ?? Driver::getInstance()->getStorageByUserId(1);
 
             $arFile = \CFile::MakeFileArray($tmpName);
             $arFile['name'] = "tender_result_{$tenderId}.xlsx";

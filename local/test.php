@@ -17,8 +17,8 @@ use Bitrix\Main\Localization\Loc;
 
 require_once($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/include/prolog_before.php");
 
-\Bitrix\Main\Loader::includeModule('tender');
-$options = \Bitrix\Main\Config\Option::getForModule('tender');
+\Bitrix\Main\Loader::includeModule('faleev.faleev.tender');
+$options = \Bitrix\Main\Config\Option::getForModule('faleev.faleev.tender');
 print '<pre>' . print_r($options, true) . '</pre>';
 die();
 \Bitrix\Main\Loader::includeModule('crm');

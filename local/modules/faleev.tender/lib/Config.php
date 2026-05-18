@@ -1,5 +1,5 @@
 <?php
-namespace Tender;
+namespace Faleev\Tender;
 
 class Config
 {
