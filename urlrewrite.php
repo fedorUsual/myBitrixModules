@@ -1,5 +1,21 @@
 <?php
 $arUrlRewrite=array (
+  585 => 
+  array (
+    'CONDITION' => '#^/pub/annuals/([0-9a-zA-Z~]+)/#',
+    'RULE' => 'shortCode=$1',
+    'ID' => NULL,
+    'PATH' => '/pub/annual_summary.php',
+    'SORT' => 50,
+  ),
+  586 => 
+  array (
+    'CONDITION' => '#^/pub/annual_summary/([0-9a-z\\.]+)/([0-9a-z\\.\\_]+)/\\?user_lang=[a-z]+#',
+    'RULE' => 'signedId=$1&signedType=$2',
+    'ID' => NULL,
+    'PATH' => '/pub/annual_summary.php',
+    'SORT' => 60,
+  ),
   140 => 
   array (
     'CONDITION' => '#^/site_qn/pub/document/([0-9a-zA-Z_-]+)/([0-9a-zA-Z]+)/([^/]*)#',
@@ -208,6 +224,14 @@ $arUrlRewrite=array (
     'PATH' => '/pub/calendar_sharing.php',
     'SORT' => 100,
   ),
+  591 => 
+  array (
+    'CONDITION' => '#^/extranet/video/([\\.\\-0-9a-zA-Z]+)(/?)([^/]*)#',
+    'RULE' => 'alias=$1&videoconf',
+    'ID' => 'call:conference',
+    'PATH' => '/conference/videoconf.php',
+    'SORT' => 100,
+  ),
   164 => 
   array (
     'CONDITION' => '#^/site_qn/video/([\\.\\-0-9a-zA-Z]+)(/?)([^/]*)#',
@@ -400,14 +424,6 @@ $arUrlRewrite=array (
     'PATH' => '/mobile/disk/index.php',
     'SORT' => 100,
   ),
-  67 => 
-  array (
-    'CONDITION' => '#^/video/([\\.\\-0-9a-zA-Z]+)(/?)([^/]*)#',
-    'RULE' => 'alias=$1&videoconf',
-    'ID' => NULL,
-    'PATH' => '/desktop_app/router.php',
-    'SORT' => 100,
-  ),
   529 => 
   array (
     'CONDITION' => '#^/site_gm/pub/payment-slip/([\\w\\W]+)/#',
@@ -430,6 +446,14 @@ $arUrlRewrite=array (
     'RULE' => 'signed_payment_id=$1',
     'ID' => 'bitrix:salescenter.pub.payment.slip',
     'PATH' => '/site_rj/pub/payment_slip.php',
+    'SORT' => 100,
+  ),
+  590 => 
+  array (
+    'CONDITION' => '#^/video/([\\.\\-0-9a-zA-Z]+)(/?)([^/]*)#',
+    'RULE' => 'alias=$1&videoconf',
+    'ID' => 'call:conference',
+    'PATH' => '/conference/videoconf.php',
     'SORT' => 100,
   ),
   300 => 
@@ -742,6 +766,14 @@ $arUrlRewrite=array (
     'RULE' => '',
     'ID' => 'bitrix:landing.pub',
     'PATH' => '/site_qn/mobile/knowledge/group/index.php',
+    'SORT' => 100,
+  ),
+  584 => 
+  array (
+    'CONDITION' => '#^/extranet/task/comments/([0-9]+)#',
+    'RULE' => 'taskId=$1',
+    'ID' => NULL,
+    'PATH' => '/extranet/tasks/comments.php',
     'SORT' => 100,
   ),
   411 => 
@@ -4216,6 +4248,14 @@ $arUrlRewrite=array (
     'PATH' => '/bi/dashboard/index.php',
     'SORT' => 100,
   ),
+  589 => 
+  array (
+    'CONDITION' => '#^/desktop/menu/#',
+    'RULE' => '',
+    'ID' => 'bitrix:intranet.menu',
+    'PATH' => '/desktop_menu/index.php',
+    'SORT' => 100,
+  ),
   359 => 
   array (
     'CONDITION' => '#^/site_rj/rpa/#',
@@ -4416,14 +4456,6 @@ $arUrlRewrite=array (
     'PATH' => '/site_pq/kb/index.php',
     'SORT' => 100,
   ),
-  567 => 
-  array (
-    'CONDITION' => '#^/bi/dataset/#',
-    'RULE' => '',
-    'ID' => 'bitrix:biconnector.apachesuperset.workspace_analytic.controller',
-    'PATH' => '/bi/dataset/index.php',
-    'SORT' => 100,
-  ),
   61 => 
   array (
     'CONDITION' => '#^/knowledge/#',
@@ -4454,14 +4486,6 @@ $arUrlRewrite=array (
     'RULE' => '',
     'ID' => 'bitrix:biconnector.apachesuperset.workspace_analytic.controller',
     'PATH' => '/bi/source/index.php',
-    'SORT' => 100,
-  ),
-  570 => 
-  array (
-    'CONDITION' => '#^/vibe/edit/#',
-    'RULE' => '',
-    'ID' => 'bitrix:landing.start',
-    'PATH' => '/vibe/edit/index.php',
     'SORT' => 100,
   ),
   79 => 
@@ -4542,14 +4566,6 @@ $arUrlRewrite=array (
     'RULE' => '',
     'ID' => 'bitrix:booking',
     'PATH' => '/booking/index.php',
-    'SORT' => 100,
-  ),
-  107 => 
-  array (
-    'CONDITION' => '#^/crm/ml/#',
-    'RULE' => '',
-    'ID' => 'bitrix:crm.ml',
-    'PATH' => '/crm/ml/index.php',
     'SORT' => 100,
   ),
   51 => 

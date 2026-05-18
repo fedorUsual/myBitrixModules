@@ -33,7 +33,7 @@ class Prolog
                     && ($urlQuery['action'] == 'save')
                 ) ||
                 (
-                    $urlQuery['action'] == 'crm.controller.item.update'
+                    $urlQuery['action'] == 'crm.Controller.item.update'
                 )
             )
         )

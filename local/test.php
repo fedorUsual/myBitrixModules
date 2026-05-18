@@ -1,23 +1,25 @@
 <?php
 
-//use Bitrix\Bizproc\Workflow\Entity\WorkflowUserTable;
-//use Bitrix\Bizproc\Workflow\Task\TaskTable;
-//use Bitrix\Bizproc\Workflow\Task\TaskUserTable;
-//use Bitrix\Crm\Service\Container;
-//use Bitrix\Crm\Service\Factory;
-//use Bitrix\Disk\Driver;
-//use Bitrix\Disk\File;
-//use Bitrix\Disk\Folder;
-//use Bitrix\Disk\Internals\Error\ErrorCollection;
-//use Bitrix\Disk\Sharing;
-//use Bitrix\Main\ArgumentException;
-//use Bitrix\Main\Engine\CurrentUser;
-//use Bitrix\Main\EventManager;
-//use Bitrix\Main\Localization\Loc;
+use Bitrix\Bizproc\Workflow\Entity\WorkflowUserTable;
+use Bitrix\Bizproc\Workflow\Task\TaskTable;
+use Bitrix\Bizproc\Workflow\Task\TaskUserTable;
+use Bitrix\Crm\Service\Container;
+use Bitrix\Crm\Service\Factory;
+use Bitrix\Disk\Driver;
+use Bitrix\Disk\File;
+use Bitrix\Disk\Folder;
+use Bitrix\Disk\Internals\Error\ErrorCollection;
+use Bitrix\Disk\Sharing;
+use Bitrix\Main\ArgumentException;
+use Bitrix\Main\Engine\CurrentUser;
+use Bitrix\Main\EventManager;
+use Bitrix\Main\Localization\Loc;
 
-//require_once($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/include/prolog_before.php");
+require_once($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/include/prolog_before.php");
 
-echo 'hello 434343';
+\Bitrix\Main\Loader::includeModule('tender');
+$options = \Bitrix\Main\Config\Option::getForModule('tender');
+print '<pre>' . print_r($options, true) . '</pre>';
 die();
 \Bitrix\Main\Loader::includeModule('crm');
 

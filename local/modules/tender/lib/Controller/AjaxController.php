@@ -1,19 +1,30 @@
 <?php
 namespace Tender\Controller;
 
+use Bitrix\Crm\Service\Container;
+use Bitrix\Disk\Driver;
+use Bitrix\Disk\File;
+use Bitrix\Main\Application;
+use Bitrix\Main\ArgumentNullException;
+use Bitrix\Main\Config\Option;
 use Bitrix\Main\Engine\Controller;
 use Bitrix\Main\Engine\ActionFilter;
 use Bitrix\Main\Loader;
 use Bitrix\Main\Diag\Debug;
 use Bitrix\Main\Web\HttpClient;
 use Bitrix\Crm\Service;
+use Exception;
 use OpenSpout\Writer\XLSX\Writer;
 use OpenSpout\Common\Entity\Row;
 use OpenSpout\Common\Entity\Cell;
 use Tender\Config;
+use Tender\Handlers\LogHandler;
+use Throwable;
 
 class AjaxController extends Controller
 {
+	protected static string $moduleId = 'tender';
+
     /**
      * Конфигурация фильтров для экшенов
      */
@@ -67,7 +78,7 @@ class AjaxController extends Controller
             Loader::includeModule('tender');
 
             // Передаем ID в Handler. Теперь он найдет Item 3057 и отправит в ИИ.
-            \Tender\Handlers\LogHandler::onAfterUpdate($itemId);
+            LogHandler::onAfterUpdate($itemId);
 
             return ['status' => 'success', 'id' => $itemId];
         }
@@ -86,7 +97,7 @@ class AjaxController extends Controller
         try {
             $rawInput = file_get_contents('php://input');
             $data = json_decode($rawInput, true);
-
+			$options = Option::getForModule(self::$moduleId);
             if (!$data || !isset($data['tender_id'])) {
                 return ['status' => 'error', 'message' => 'No ID found'];
             }
@@ -95,53 +106,73 @@ class AjaxController extends Controller
             $isCompleted = (($data['status'] ?? '') === 'completed');
 
             // 1. АВТОРИЗАЦИЯ
-            if (!is_object($USER)) { $USER = new \CUser; }
+            if (!is_object($USER)) {
+				$USER = new \CUser;
+			}
             $USER->Authorize($authorizedUserId);
 
-            if (!\Bitrix\Main\Loader::includeModule('crm') || !\Bitrix\Main\Loader::includeModule('disk')) {
+            if (!Loader::includeModule('crm') || !Loader::includeModule('disk')) {
                 return ['status' => 'error', 'message' => 'Modules missing'];
             }
 
-            $entityTypeId = (int)\Tender\Config::SMART_PROCESS_ID;
-            $container = \Bitrix\Crm\Service\Container::getInstance();
+            $entityTypeId = (int)$options['smart_process_id'];
+            $container = Container::getInstance();
             $factory = $container->getFactory($entityTypeId);
             
-            if (!$factory) return ['status' => 'error', 'message' => "Factory not found"];
+            if (!$factory) {
+	            return ['status' => 'error', 'message' => "Factory not found"];
+            }
 
             $item = $factory->getItem($tenderId);
-            if (!$item) return ['status' => 'error', 'message' => 'Item not found'];
+            if (!$item) {
+	            return ['status' => 'error', 'message' => 'Item not found'];
+            }
 
             // 2. ЗАПОЛНЕНИЕ ТЕКСТОВЫХ ПОЛЕЙ
-            $item->set(\Tender\Config::FIELD_SUMMARY, $data['summary_text'] ?? '');
-            $item->set(\Tender\Config::FIELD_ERROR, $isCompleted ? "" : ($data['error_message'] ?? ''));
+            $item->set($options['field_summary'], $data['summary_text'] ?? '');
+            $item->set($options['field_error'], $isCompleted ? "" : ($data['error_message'] ?? ''));
+	        // 3. ОБРАБОТКА ФАЙЛА (СИЛОВОЙ МЕТОД SQL)
+			if (!empty($data['table_tender'])) {
+				require_once($_SERVER["DOCUMENT_ROOT"] . "/local/vendor/autoload.php");
+				$diskFileId = $this->generateExcelAndSaveToDisk($data['table_tender'], $tenderId);
+				if ($diskFileId) {
+					$diskFile = File::loadById($diskFileId);
+					if ($diskFile) {
+						$bFileId = (int)$diskFile->getFileId();
+						$fieldName = $options['field_table_tender'];
+						$item->set($fieldName, $bFileId);
+					}
+				}
+			}
 
-            // 3. СОХРАНЕНИЕ ТЕКСТА
+            // 4. СОХРАНЕНИЕ ТЕКСТА
             $operation = $factory->getUpdateOperation($item);
             $operation->disableCheckAccess();
             $result = $operation->launch();
 
+			/** todo:: раскомментировать, в случае, если правильный способ не заработает */
             // 4. ОБРАБОТКА ФАЙЛА (СИЛОВОЙ МЕТОД SQL)
-            if (!empty($data['table_tender'])) {
+            /*if (!empty($data['table_tender'])) {
                 require_once($_SERVER["DOCUMENT_ROOT"] . "/local/vendor/autoload.php");
                 $diskFileId = $this->generateExcelAndSaveToDisk($data['table_tender'], $tenderId);
                 
                 if ($diskFileId) {
-                    $diskFile = \Bitrix\Disk\File::loadById($diskFileId);
+                    $diskFile = File::loadById($diskFileId);
                     if ($diskFile) {
                         $bFileId = (int)$diskFile->getFileId();
-                        $fieldName = \Tender\Config::FIELD_TABLE_TENDER;
+                        $fieldName = $options['field_table_tender'];
                         
                         // Прямая запись в БД, так как API Smart Process блокирует файлы
-                        $connection = \Bitrix\Main\Application::getConnection();
+                        $connection = Application::getConnection();
                         $tableName = "b_crm_dynamic_items_" . $entityTypeId;
                         $sql = "UPDATE {$tableName} SET {$fieldName} = '{$bFileId}' WHERE ID = {$tenderId}";
                         $connection->queryExecute($sql);
                         
                         // Очистка кеша для визуального обновления
-                        \Bitrix\Main\Application::getInstance()->getTaggedCache()->clearByTag("crm_dynamic_item_" . $tenderId);
+                        Application::getInstance()->getTaggedCache()->clearByTag("crm_dynamic_item_" . $tenderId);
                     }
                 }
-            }
+            }*/
 
             $USER->Logout();
 
@@ -152,18 +183,21 @@ class AjaxController extends Controller
 
             return ['status' => 'error', 'errors' => $result->getErrorMessages()];
 
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             if (is_object($USER)) { $USER->Logout(); }
-            \Bitrix\Main\Diag\Debug::writeToFile($e->getMessage(), "CALLBACK_FATAL", "tender_error.log");
+            Debug::writeToFile($e->getMessage(), "CALLBACK_FATAL", "tender_error.log");
             return ['status' => 'error', 'exception' => $e->getMessage()];
         }
     }
 
 
-    /**
-     * Генерация XLSX и сохранение на Диск
-     */
-    private function generateExcelAndSaveToDisk(array $tableData, $tenderId)
+	/**
+	 * Генерация XLSX и сохранение на Диск
+	 * @param array $tableData
+	 * @param int|string $tenderId
+	 * @return int|null
+	 */
+    private function generateExcelAndSaveToDisk(array $tableData, int|string $tenderId): ?int
     {
         try {
             $fileName = "tender_result_{$tenderId}_" . date('His') . ".xlsx";
@@ -184,8 +218,8 @@ class AjaxController extends Controller
             }
             $writer->close();
 
-            $storage = \Bitrix\Disk\Driver::getInstance()->getStorageByCommonId('shared_files_s1') 
-                       ?? \Bitrix\Disk\Driver::getInstance()->getStorageByUserId(1);
+            $storage = Driver::getInstance()->getStorageByCommonId('shared_files_s1')
+                       ?? Driver::getInstance()->getStorageByUserId(1);
             
             if (!$storage) return null;
 
@@ -196,16 +230,19 @@ class AjaxController extends Controller
             unlink($tmpPath);
 
             return $newFile ? $newFile->getId() : null;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Debug::writeToFile($e->getMessage(), "EXCEL_ERR", "tender_error.log");
             return null;
         }
     }
 
-    /**
-     * Сохранение готового Base64 (если файл приходит строкой)
-     */
-    private function saveBase64ToDisk($base64String, $tenderId)
+	/**
+	 * Сохранение готового Base64 (если файл приходит строкой)
+	 * @param string $base64String
+	 * @param int|string $tenderId
+	 * @return int|null
+	 */
+    private function saveBase64ToDisk(string $base64String, int|string $tenderId): ?int
     {
         try {
             $fileContent = base64_decode($base64String);
@@ -222,38 +259,37 @@ class AjaxController extends Controller
             unlink($tmpName);
 
             return $newFile ? $newFile->getId() : null;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Debug::writeToFile($e->getMessage(), "B64_ERR", "tender_error.log");
             return null;
         }
     }
 
-    /**
-     * Активация триггера робота
-     */
-        /**
-     * Активация триггера робота через проверенный HttpClient (Webhook)
-     */
-    private function fireAutomationTrigger($id)
+	/**
+	 * Активация триггера робота через проверенный HttpClient (Webhook)
+	 * @param int|string $id
+	 * @throws Exception
+	 */
+    private function fireAutomationTrigger(int|string $id): void
     {
         // Берем ID сущности из конфига (например, 1186 или 1354)
-        $entityId = \Tender\Config::SMART_PROCESS_ID;
-        $triggerCode = "6py38";
+	    $options = Option::getForModule(self::$moduleId);
+        $entityId = $options['smart_process_id'];
+        $triggerCode = $options['trigger_code'] ?? "6py38";
         
         // Формируем проверенный URL
-        $triggerUrl = "https://tk.tandem-consult.ru/rest/608/b9643sh3r8z1qfs8/crm.automation.trigger/?" . http_build_query([
+        $triggerUrl = Config::getHostUrl() . "/rest/608/b9643sh3r8z1qfs8/crm.automation.trigger/?" . http_build_query([
             'target' => "DYNAMIC_{$entityId}_{$id}",
             'code' => $triggerCode
         ]);
 
         // Асинхронный вызов через HttpClient
-        $httpClient = new \Bitrix\Main\Web\HttpClient();
+        $httpClient = new HttpClient();
         $httpClient->setTimeout(5);
         $httpClient->get($triggerUrl);
         
         // Логируем для уверенности, что ссылка сформирована верно
-        \Bitrix\Main\Diag\Debug::writeToFile("Trigger fired: " . $triggerUrl, "TRIGGER_DEBUG", "tender_rest.log");
+        Debug::writeToFile("Trigger fired: " . $triggerUrl, "TRIGGER_DEBUG", "tender_rest.log");
     }
-
 
 }

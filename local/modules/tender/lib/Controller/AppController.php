@@ -1,16 +1,16 @@
 <?php
 namespace Tender\Controller;
 
+use Bitrix\Main\Config\Option;
 use Bitrix\Main\Engine\Controller;
 use Bitrix\Main\Engine\ActionFilter;
 use Bitrix\Main\Loader;
-use Bitrix\Main\Diag\Debug;
 use Bitrix\Main\EventManager;
 use Bitrix\Main\Application;
-use Tender\Config;
 
 class AppController extends Controller
 {
+	protected static string $moduleId = 'tender';
     public function configureActions()
     {
         return [
@@ -45,11 +45,12 @@ class AppController extends Controller
 
     public function testAction()
     {
+		$options = Option::getForModule(self::$moduleId);
         return [
             'status' => 'online',
             'config_check' => [
-                'smart_process_id' => Config::SMART_PROCESS_ID,
-                'field_summary' => Config::FIELD_SUMMARY,
+                'smart_process_id' => $options['smart_process_id'],
+                'field_summary' => $options['field_summary'],
             ],
             'server_time' => date('H:i:s'),
         ];
@@ -64,8 +65,8 @@ class AppController extends Controller
         if (!Loader::includeModule('crm')) {
             return ['status' => 'error', 'message' => 'CRM module not found'];
         }
-
-        $entityTypeId = (int)Config::SMART_PROCESS_ID;
+	    $options = Option::getForModule(self::$moduleId);
+        $entityTypeId = (int)$options['smart_process_id'];
         if ($entityTypeId <= 0) {
             return ['status' => 'error', 'message' => 'Invalid SMART_PROCESS_ID in Config'];
         }

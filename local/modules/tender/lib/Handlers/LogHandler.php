@@ -2,15 +2,21 @@
 namespace Tender\Handlers;
 
 use Bitrix\Crm\Item;
+use Bitrix\Crm\Item\Dynamic;
 use Bitrix\Crm\Service\Container;
+use Bitrix\Main\ArgumentNullException;
+use Bitrix\Main\Config\Option;
 use Bitrix\Main\Event;
 use Bitrix\Main\Loader;
 use Bitrix\Main\Web\HttpClient;
 use Bitrix\Main\Diag\Debug;
+use Exception;
 use Tender\Config;
+use Throwable;
 
 class LogHandler
 {
+	protected static string $module_id = "tender";
     protected static bool $isProcessing = false;
 
     public static function onAfterUpdate($event)
@@ -31,7 +37,8 @@ class LogHandler
             $item = $event->getParameter('item');
             $debugInfo .= " | Context: Event";
         } elseif (is_numeric($event)) {
-            $factory = Container::getInstance()->getFactory(Config::SMART_PROCESS_ID);
+			$options = Option::getForModule(self::$module_id);
+            $factory = Container::getInstance()->getFactory($options['smart_process_id']);
             $item = $factory ? $factory->getItem((int)$event) : null;
             $debugInfo .= " | Context: ID (" . $event . ")";
         }
@@ -54,7 +61,8 @@ class LogHandler
         $id = $item->getId();
         
         // Получаем значение поля
-        $archiveUrlRaw = $item->get(Config::FIELD_ARCHIVE_URL); 
+	    $options = Option::getForModule(self::$module_id);
+        $archiveUrlRaw = $item->get($options['field_archive_url']);
         $archiveUrl = '';
 
         if (is_array($archiveUrlRaw)) {
@@ -81,30 +89,47 @@ class LogHandler
         self::sendToAi($payload);
     }
 
-    private static function sendToAi($data)
+	/**
+	 * @throws Exception
+	 */
+	private static function sendToAi($data)
     {
         $httpClient = new HttpClient(['socketTimeout' => 10, 'streamTimeout' => 10]);
         $httpClient->setHeader('Content-Type', 'application/json');
         
         $body = json_encode($data, JSON_UNESCAPED_UNICODE);
-        $response = $httpClient->post(Config::AI_SERVER_URL, $body);
-
-        Debug::writeToFile(
-            [
-                'STATUS' => $httpClient->getStatus(),
-                'REPLY' => json_decode($response, true) ?: $response
-            ],
-            "AI_RESPONSE", 
-            "tender_rest.log"
-        );
+	    $options = Option::getForModule(self::$module_id);
+	    try {
+		    $response = $httpClient->post($options['ai_server_url'], $body);
+		    Debug::writeToFile(
+			    [
+				    'STATUS' => $httpClient->getStatus(),
+				    'REPLY' => json_decode($response, true) ?: $response,
+			    ],
+			    "AI_RESPONSE",
+			    "tender_rest.log"
+		    );
+	    } catch (Throwable $e) {
+		    Debug::writeToFile(
+			    [
+				    'STATUS' => '500',
+				    'REPLY' => $e->getMessage() . PHP_EOL . $e->getTraceAsString(),
+			    ],
+			    "AI_RESPONSE",
+			    "tender_rest.log"
+		    );
+	    }
     }
 
     public static function update($data)
     {
         $itemId = (int)$data['tender_id'];
-        if ($itemId <= 0 || !Loader::includeModule('crm')) return;
+        if ($itemId <= 0 || !Loader::includeModule('crm')) {
+	        return;
+        }
 
-        $factory = Container::getInstance()->getFactory(Config::SMART_PROCESS_ID);
+	    $options = Option::getForModule(self::$module_id);
+	    $factory = Container::getInstance()->getFactory($options['smart_process_id']);
         $item = $factory ? $factory->getItem($itemId) : null;
 
         if ($item) {
@@ -112,7 +137,7 @@ class LogHandler
             self::$isProcessing = true; 
 
             // 1. ЗАПИСЬ ТЕКСТОВЫХ ДАННЫХ
-            $item->set(Config::FIELD_SUMMARY, $data['summary_text'] ?? '');
+            $item->set($options['field_summary'], $data['summary_text'] ?? '');
             
             $currentTitle = $item->get('TITLE');
             if (strpos($currentTitle, '[AI READY]') === false) {
@@ -123,7 +148,7 @@ class LogHandler
             // Если в ответе от ИИ пришла таблица и у нас есть disk_file_id
             if (!empty($data['disk_file_id'])) {
                 // Используем проверенный префикс 'n' + ID объекта Диска
-                $item->set(Config::FIELD_TABLE_TENDER, 'n' . $data['disk_file_id']);
+                $item->set($options['field_table_tender'], 'n' . $data['disk_file_id']);
             }
 
             // 3. СОХРАНЕНИЕ
@@ -132,8 +157,8 @@ class LogHandler
             $res = $operation->launch();
 
             // 4. ПИНГ ТРИГГЕРА (через ваш проверенный HttpClient)
-            $entityId = Config::SMART_PROCESS_ID;
-            $triggerUrl = "https://tk.tandem-consult.ru/rest/608/b9643sh3r8z1qfs8/crm.automation.trigger/?target=DYNAMIC_{$entityId}_{$itemId}&code=6py38";
+	        $entityId = $options['smart_process_id'];
+            $triggerUrl = Config::getHostUrl() . "/rest/608/b9643sh3r8z1qfs8/crm.automation.trigger/?target=DYNAMIC_{$entityId}_{$itemId}&code=6py38";
             $http = new HttpClient();
             $http->get($triggerUrl);
 
@@ -148,4 +173,16 @@ class LogHandler
         }
     }
 
+	public static function newHandler(Event $event)
+	{
+		/** @var Dynamic $item */
+		$item = $event->getParameter('item');
+		$itemId = $item->getParameter('id');
+		file_put_contents($_SERVER['DOCUMENT_ROOT'] . '/local/test.json', json_encode([
+			'new Handler',
+			$item->getData(),
+			$item->getEntityTypeId(),
+			$itemId
+		]));
+	}
 }

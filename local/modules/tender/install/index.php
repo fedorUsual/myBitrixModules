@@ -14,6 +14,8 @@ class tender extends CModule // Имя класса обычно совпада�
     {
         ModuleManager::registerModule($this->MODULE_ID);
         $this->InstallEvents();
+
+		return true;
     }
 
     public function DoUninstall()
