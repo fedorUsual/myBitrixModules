@@ -21,15 +21,37 @@ class faleev_tender extends CModule // Имя класса обычно совп
     {
         ModuleManager::registerModule($this->MODULE_ID);
         $this->InstallEvents();
-
+		$this->InstallFiles();
 		return true;
     }
 
     public function DoUninstall()
     {
         $this->UnInstallEvents();
+		$this->UnInstallFiles();
         ModuleManager::unRegisterModule($this->MODULE_ID);
     }
+
+	/**
+	 * @return true
+	 */
+	function InstallFiles(): bool
+	{
+		if (is_dir($p = __DIR__ . '/routes')) {
+			if ($dir = opendir($p)) {
+				while (false !== $item = readdir($dir)) {
+					if ($item == '..' || $item == '.') {
+						continue;
+					}
+
+					CopyDirFiles($p . '/' . $item, $_SERVER['DOCUMENT_ROOT'] . '/local/routes/' . $item, $ReWrite = True, $Recursive = True);
+				}
+				closedir($dir);
+			}
+		}
+
+		return true;
+	}
 
     public function InstallEvents()
     {
@@ -47,6 +69,25 @@ class faleev_tender extends CModule // Имя класса обычно совп
 	        $this->MODULE_ID, '\Tender\Handlers\LogHandler', 'onDynamicAdd'
         );
     }
+
+	/**
+	 * @return true
+	 */
+	function UnInstallFiles(): bool
+	{
+		if (is_dir($p = __DIR__ . '/routes')) {
+			if ($dir = opendir($p)) {
+				while (false !== $item = readdir($dir)) {
+					if ($item == '..' || $item == '.')
+						continue;
+
+					DeleteDirFilesEx('/local/routes/' . $item);
+				}
+				closedir($dir);
+			}
+		}
+		return true;
+	}
 
     public function UnInstallEvents()
     {

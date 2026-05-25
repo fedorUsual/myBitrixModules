@@ -75,6 +75,12 @@ $aTabsStatic = array(
                 "",
                 array('text', 50)
             ),
+            array(
+                "SECRET",
+                GetMessage("TENDER_SECRET"),
+                "",
+                array('text', 50)
+            ),
         ),
     )
 );

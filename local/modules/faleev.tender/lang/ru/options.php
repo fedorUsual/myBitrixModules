@@ -9,3 +9,4 @@ $MESS['TENDER_FIELD_SUMMARY'] = 'Код поля "Summary"';
 $MESS['TENDER_FIELD_ERROR'] = 'Код поля "Ошибка"';
 $MESS['TENDER_FIELD_TABLE_TENDER'] = 'Код поля "Таблица тендера"';
 $MESS['TENDER_TRIGGER_CODE'] = 'Триггер робота"';
+$MESS['TENDER_SECRET'] = 'Авторизационный Bearer-токен"';

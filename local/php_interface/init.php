@@ -7,6 +7,8 @@ use Bitrix\Main\Text\StringHelper;
 
 $root = Application::getDocumentRoot();
 
+// Подключаем файл CalendarInfoblocAdd.php и запускаем скрипт, который лежит в файле CalendarInfoblocAdd.php
+require dirname(__FILE__). '/CalendarInfoblocAdd.php';
 
 // 1. ПОДКЛЮЧЕНИЕ ВКЛЮЧАЕМЫХ ФАЙЛОВ
 foreach (['constants.php', 'functions.php', 'events.php'] as $file) {
@@ -14,47 +16,33 @@ foreach (['constants.php', 'functions.php', 'events.php'] as $file) {
     if (file_exists($path)) require_once $path;
 }
 
-/** todo::вообще это все включется как только подключается модуль, через автоподгрузку, но если очень надо,
- *   то лучше это подключать все в файле include.php модуля */
-// 2. РЕГИСТРАЦИЯ КЛАССОВ (Только тех, что не в Composer)
-//Loader::registerAutoLoadClasses(null, [
-//    // Основной модуль Tender (старая структура)
-//    'Tender\Config'                     => '/local/modules/faleev.tender/lib/Config.php',
-//    'Faleev\Tender\Handlers\LogHandler'        => '/local/modules/faleev.tender/lib/Handlers/LogHandler.php',
-//    'Tender\Controller\AjaxController'  => '/local/modules/faleev.tender/lib/Controller/AjaxController.php',
-//    'Tender\Controller\AppController'   => '/local/modules/faleev.tender/lib/Controller/AppController.php',
-//
-//    // Модуль Tender.Bot (Классы-контроллеры, если Composer еще не прожевал dump-autoload)
-//    'Tender\Bot\Controller\AjaxController' => '/local/modules/faleev.tender.bot/lib/Controller/AjaxController.php',
-//    'Tender\Bot\Controller\AppController'  => '/local/modules/faleev.tender.bot/lib/Controller/AppController.php',
-//]);
+// модуль обмена информацией с тендерами
+Loader::includeModule('faleev.tender');
 
-Loader::includeModule('faleev.faleev.tender');
-
-//// 3. ВСПОМОГАТЕЛЬНЫЕ КЛАССЫ
-//if (!class_exists('YNotifyEventsClass')) {
-//    class YNotifyEventsClass {
-//        public static function OnBeforeConfirmNotifyHandler($module, $tag, $value, $arNotify) {
-//            if ($module === "bizproc" && Loader::includeModule("bizproc")) {
-//                $arTag = explode("|", (string)$tag);
-//                if (count($arTag) > 3 && $arTag[0] === "NOTIFYKEYBOARDACTIVITY" && $arTag[1] === "CONFIRM") {
-//                    $arEventParameters = [
-//                        $arTag[2],
-//                        [
-//                            'eventName'  => 'OnBeforeConfirmNotify',
-//                            'RESULT'     => $value,
-//                            'MESSAGE_ID' => $arNotify['ID'],
-//                            'CHAT_ID'    => $arNotify['CHAT_ID'],
-//                        ],
-//                    ];
-//                    \CBPRuntime::SendExternalEvent($arTag[2], $arTag[3], $arEventParameters);
-//                    return $value;
-//                }
-//            }
-//            return $value;
-//        }
-//    }
-//}
+// 3. ВСПОМОГАТЕЛЬНЫЕ КЛАССЫ
+if (!class_exists('YNotifyEventsClass')) {
+    class YNotifyEventsClass {
+        public static function OnBeforeConfirmNotifyHandler($module, $tag, $value, $arNotify) {
+            if ($module === "bizproc" && Loader::includeModule("bizproc")) {
+                $arTag = explode("|", (string)$tag);
+                if (count($arTag) > 3 && $arTag[0] === "NOTIFYKEYBOARDACTIVITY" && $arTag[1] === "CONFIRM") {
+                    $arEventParameters = [
+                        $arTag[2],
+                        [
+                            'eventName'  => 'OnBeforeConfirmNotify',
+                            'RESULT'     => $value,
+                            'MESSAGE_ID' => $arNotify['ID'],
+                            'CHAT_ID'    => $arNotify['CHAT_ID'],
+                        ],
+                    ];
+                    \CBPRuntime::SendExternalEvent($arTag[2], $arTag[3], $arEventParameters);
+                    return $value;
+                }
+            }
+            return $value;
+        }
+    }
+}
 
 // 4. ОФОРМЛЕНИЕ CRM
 Asset::getInstance()->addString("
@@ -70,13 +58,13 @@ Asset::getInstance()->addString("
 </style>
 ");
 
-//// 5. ОБРАБОТЧИКИ СОБЫТИЙ
-//$eventManager = EventManager::getInstance();
-//
-//
-//// Подтверждение в мессенджере
-//$eventManager->addEventHandler(
-//    "im",
-//    "OnBeforeConfirmNotify",
-//    ["YNotifyEventsClass", "OnBeforeConfirmNotifyHandler"]
-//);
+// 5. ОБРАБОТЧИКИ СОБЫТИЙ
+$eventManager = EventManager::getInstance();
+
+
+// Подтверждение в мессенджере
+$eventManager->addEventHandler(
+    "im",
+    "OnBeforeConfirmNotify",
+    ["YNotifyEventsClass", "OnBeforeConfirmNotifyHandler"]
+);
