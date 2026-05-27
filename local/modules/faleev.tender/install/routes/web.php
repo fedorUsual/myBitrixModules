@@ -19,7 +19,9 @@ return function (RoutingConfigurator $routes) {
 		$routes->get('new/{id}', [AuthController::class, 'getTenderById'])
 			->name('getTenderById');
         $routes->any('sync/', [AjaxController::class, 'sync']);
+        $routes->any('crm/create-card/', [AjaxController::class, 'createCard']);
         $routes->get('test/', [AppController::class, 'test']);
         $routes->get('subscribe/', [AppController::class, 'subscribe']);
+        $routes->get('render/', [AppController::class, 'render']);
     });
 };

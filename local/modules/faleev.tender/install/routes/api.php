@@ -7,9 +7,11 @@ return function (RoutingConfigurator $routes) {
     $routes->prefix('api/faleev.tender')->group(function (RoutingConfigurator $routes) {
         // Основная синхронизация
         $routes->any('sync/', [AjaxController::class, 'sync']);
-        
+        $routes->any('crm/create-card/', [AjaxController::class, 'createCard']);
+
         // Сервисные методы
         $routes->get('test/', [AppController::class, 'test']);
         $routes->get('subscribe/', [AppController::class, 'subscribe']);
+        $routes->get('render/', [AppController::class, 'render']);
     });
 };

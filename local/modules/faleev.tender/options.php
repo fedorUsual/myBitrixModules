@@ -34,9 +34,45 @@ $aTabsStatic = array(
                 array('text', 50)
             ),
             array(
-                "SMART_PROCESS_ID",
-                GetMessage("TENDER_SMART_PROCESS_ID"),
+                "AI_PROCESS_EMAIL_URL",
+                GetMessage("TENDER_AI_PROCESS_EMAIL_URL"),
                 "",
+                array('text', 50)
+            ),
+            array(
+                "EMAIL_POLL_INTERVAL_MINUTES",
+                GetMessage("TENDER_EMAIL_POLL_INTERVAL_MINUTES"),
+                "15",
+                array('text', 10)
+            ),
+            array(
+                "IMAP_HOST",
+                GetMessage("TENDER_IMAP_HOST"),
+                "",
+                array('text', 50)
+            ),
+            array(
+                "IMAP_PORT",
+                GetMessage("TENDER_IMAP_PORT"),
+                "993",
+                array('text', 10)
+            ),
+            array(
+                "IMAP_USER",
+                GetMessage("TENDER_IMAP_USER"),
+                "",
+                array('text', 50)
+            ),
+            array(
+                "IMAP_PASSWORD",
+                GetMessage("TENDER_IMAP_PASSWORD"),
+                "",
+                array('password', 50)
+            ),
+            array(
+                "IMAP_MAILBOX",
+                GetMessage("TENDER_IMAP_MAILBOX"),
+                "INBOX",
                 array('text', 50)
             ),
             array(
@@ -70,6 +106,84 @@ $aTabsStatic = array(
                 array('text', 50)
             ),
             array(
+                "FIELD_REQUEST_TYPE",
+                GetMessage("TENDER_FIELD_REQUEST_TYPE"),
+                "UF_CRM_57_RUROBOT_TORGI_TYPE_ZAKUPKI",
+                array('text', 50)
+            ),
+            array(
+                "FIELD_ACTIVITY_DIRECTION",
+                GetMessage("TENDER_FIELD_ACTIVITY_DIRECTION"),
+                "UF_CRM_57_1752592467",
+                array('text', 50)
+            ),
+            array(
+                "FIELD_DESCRIPTION",
+                GetMessage("TENDER_FIELD_DESCRIPTION"),
+                "UF_CRM_57_RUROBOT_TORGI_DESCR",
+                array('text', 50)
+            ),
+            array(
+                "FIELD_END_USER_INN",
+                GetMessage("TENDER_FIELD_END_USER_INN"),
+                "UF_CRM_57_RUROBOT_TORGI_INN_ZAKAZCHIKA",
+                array('text', 50)
+            ),
+            array(
+                "FIELD_END_USER_NAME",
+                GetMessage("TENDER_FIELD_END_USER_NAME"),
+                "UF_CRM_57_RUROBOT_TORGI_ZAKAZCHIK",
+                array('text', 50)
+            ),
+            array(
+                "FIELD_LOT_NUMBER",
+                GetMessage("TENDER_FIELD_LOT_NUMBER"),
+                "UF_CRM_57_RUROBOT_TORGI_NUMBER_ZAKUPKI",
+                array('text', 50)
+            ),
+            array(
+                "FIELD_TKP_DEADLINE",
+                GetMessage("TENDER_FIELD_TKP_DEADLINE"),
+                "UF_CRM_57_RUROBOT_TORGI_STOP_DATE",
+                array('text', 50)
+            ),
+            array(
+                "FIELD_TENDER_FILES_URL",
+                GetMessage("TENDER_FIELD_TENDER_FILES_URL"),
+                "UF_CRM_57_RUROBOT_TORGI_FILE_URL",
+                array('text', 50)
+            ),
+            array(
+                "FIELD_DOCUMENTS",
+                GetMessage("TENDER_FIELD_DOCUMENTS"),
+                "UF_CRM_57_RUROBOT_TORGI_FILE",
+                array('text', 50)
+            ),
+            array(
+                "FIELD_SCORING",
+                GetMessage("TENDER_FIELD_SCORING"),
+                "UF_CRM_57_1757054330",
+                array('text', 50)
+            ),
+            array(
+                "DEFAULT_CATEGORY_ID",
+                GetMessage("TENDER_DEFAULT_CATEGORY_ID"),
+                "65",
+                array('text', 50)
+            ),
+            array(
+                "DEFAULT_STAGE_ID",
+                GetMessage("TENDER_DEFAULT_STAGE_ID"),
+                "",
+                array('text', 50)
+            ),
+            array(
+                "DEFAULT_RESPONSIBLE_ID",
+                GetMessage("TENDER_DEFAULT_RESPONSIBLE_ID"),
+                "563",
+                array('text', 50)
+            ),
+            array(
                 "TRIGGER_CODE",
                 GetMessage("TENDER_TRIGGER_CODE"),
                 "",
@@ -78,6 +192,61 @@ $aTabsStatic = array(
             array(
                 "SECRET",
                 GetMessage("TENDER_SECRET"),
+                "",
+                array('text', 50)
+            ),
+            array(
+                "UF_CRM_57_1779356556019",
+                GetMessage("UF_CRM_57_1779356556019"),
+                "UF_CRM_57_1779356556019",
+                array('text', 50)
+            ),
+            GetMessage("SMAC_SMART_OPTIONS_FOR_AI_REQUEST"),
+            array(
+                "SMART_PROCESS_ID",
+                GetMessage("TENDER_SMART_PROCESS_ID"),
+                "",
+                array('text', 50)
+            ),
+            array(
+                "AI_WORK_STATUS_FIELD",
+                GetMessage("TENDER_AI_WORK_STATUS_FIELD"),
+                "",
+                array('text', 50)
+            ),
+            array(
+                "AI_WORK_STATUS",
+                GetMessage("TENDER_AI_WORK_STATUS"),
+                "",
+                array('text', 50)
+            ),
+            array(
+                "ENABLE_STAGE",
+                GetMessage("TENDER_ENABLE_STAGE"),
+                "",
+                array('text', 50)
+            ),
+            array(
+                "WORK_DIRECTION_FIELD",
+                GetMessage("TENDER_WORK_DIRECTION_FIELD"),
+                "",
+                array('text', 50)
+            ),
+            array(
+                "WORK_DIRECTION",
+                GetMessage("TENDER_WORK_DIRECTION"),
+                "",
+                array('text', 50)
+            ),
+            array(
+                "LINK_DOCUMENTS_FIELD",
+                GetMessage("TENDER_LINK_DOCUMENTS_FIELD"),
+                "",
+                array('text', 50)
+            ),
+            array(
+                "FILES_FIELD_NAME",
+                GetMessage("TENDER_FILES_FIELD_NAME"),
                 "",
                 array('text', 50)
             ),

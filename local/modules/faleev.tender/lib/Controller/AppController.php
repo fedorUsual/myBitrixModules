@@ -14,6 +14,9 @@ class AppController extends Controller
     public function configureActions()
     {
         return [
+            'render' => [
+                '-prefilters' => [ActionFilter\Csrf::class, ActionFilter\Authentication::class],
+            ],
             'test' => [
                 '-prefilters' => [ActionFilter\Csrf::class, ActionFilter\Authentication::class],
             ],
@@ -30,7 +33,7 @@ class AppController extends Controller
     public function renderAction()
     {
         $documentRoot = Application::getDocumentRoot();
-        $interfacePath = $documentRoot . '/local/modules/faleev.faleev.tender/frontend/index.php';
+        $interfacePath = $documentRoot . '/local/modules/faleev.tender/frontend/index.php';
 
         if (file_exists($interfacePath)) {
             ob_start();
@@ -40,7 +43,7 @@ class AppController extends Controller
             return ob_get_clean();
         }
 
-        return "Интерфейс модуля Tender не найден.";
+        return 'Интерфейс модуля Tender не найден.';
     }
 
     public function testAction()
@@ -72,8 +75,8 @@ class AppController extends Controller
         }
 
         $eventManager = EventManager::getInstance();
-        $moduleId = 'faleev.faleev.tender';
-        $handlerClass = "\\Faleev\\Faleev\\Tender\\Handlers\\LogHandler";
+        $moduleId = self::$moduleId;
+        $handlerClass = "\\Faleev\\Tender\\Handlers\\LogHandler";
 
         $events = [
             "OnAfterCrmDynamicItemAdd_" . $entityTypeId => "onAfterAdd",

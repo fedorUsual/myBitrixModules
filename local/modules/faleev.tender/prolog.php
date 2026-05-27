@@ -1,3 +1,3 @@
 <?php
 
-define('ADMIN_MODULE_NAME', 'faleev.faleev.tender');
+define('ADMIN_MODULE_NAME', 'faleev.tender');

@@ -1,6 +1,9 @@
 <?php
 use Bitrix\Main\ModuleManager;
 use Bitrix\Main\EventManager;
+use CAgent;
+use CModule;
+use Faleev\Tender\Handlers\LogHandler;
 
 class faleev_tender extends CModule // Имя класса обычно совпадает с ID модуля в нижнем регистре
 {
@@ -22,13 +25,16 @@ class faleev_tender extends CModule // Имя класса обычно совп
         ModuleManager::registerModule($this->MODULE_ID);
         $this->InstallEvents();
 		$this->InstallFiles();
-		return true;
+        $this->InstallAgents();
+
+       return true;
     }
 
-    public function DoUninstall()
+    public function DoUninstall(): void
     {
         $this->UnInstallEvents();
 		$this->UnInstallFiles();
+		$this->UnInstallAgents();
         ModuleManager::unRegisterModule($this->MODULE_ID);
     }
 
@@ -66,9 +72,30 @@ class faleev_tender extends CModule // Имя класса обычно совп
         // Смарт-процессы
         $eventManager->registerEventHandler(
             'crm', 'OnCrmDynamicItemAdd',
-	        $this->MODULE_ID, '\Tender\Handlers\LogHandler', 'onDynamicAdd'
+	        $this->MODULE_ID, '\Faleev\Tender\Handlers\LogHandler', 'onDynamicAdd'
+        );
+        // Смарт-процессы
+        $eventManager->registerEventHandler(
+            'crm', 'OnCrmDynamicItemUpdate',
+	        $this->MODULE_ID, \Faleev\Tender\Handlers\LogHandler::class, 'onDynamicAdd'
         );
     }
+
+	public function InstallAgents(): void
+	{
+		CAgent::AddAgent(
+			"\\Faleev\\Tender\\Agent\\EmailAgent::runCron();",
+			"faleev.tender",
+			"N",        // агент не критичный
+			60,         // интервал 60 секунд
+			"",         // дата первой генерации
+			"Y",        // активен
+			"",         // дата первого запуска
+			100,        // сортировка
+			false,      // агент в кроне
+			false
+		);
+	}
 
 	/**
 	 * @return true
@@ -94,5 +121,14 @@ class faleev_tender extends CModule // Имя класса обычно совп
         $eventManager = EventManager::getInstance();
         $eventManager->unRegisterEventHandler('crm', 'OnAfterCrmDealAdd', $this->MODULE_ID);
         $eventManager->unRegisterEventHandler('crm', 'OnCrmDynamicItemAdd', $this->MODULE_ID);
+        $eventManager->unRegisterEventHandler('crm', 'OnCrmDynamicItemUpdate', $this->MODULE_ID);
     }
+
+	public function UnInstallAgents(): void
+	{
+		CAgent::RemoveAgent(
+			"\\Faleev\\Tender\\Agent\\EmailAgent::runCron();",
+			"faleev.tender"
+		);
+	}
 }

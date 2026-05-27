@@ -8,6 +8,7 @@ use Bitrix\Main\Config\Option;
 use Bitrix\Main\Diag\Debug;
 use Bitrix\Main\Event;
 use Bitrix\Main\Loader;
+use Bitrix\Main\Localization\Loc;
 use Bitrix\Main\Web\HttpClient;
 use Exception;
 use Faleev\Tender\Config;
@@ -174,14 +175,117 @@ class LogHandler
 
 	public static function onDynamicAdd(Event $event)
 	{
+		$moduleId = 'faleev.tender';
+		Loader::includeModule($moduleId);
 		/** @var Dynamic $item */
 		$item = $event->getParameter('item');
-		$itemId = $item->getId();
-		file_put_contents($_SERVER['DOCUMENT_ROOT'] . '/local/test.json', json_encode([
-			'new Handler',
-			$item->getData(),
-			$item->getEntityTypeId(),
-			$itemId
-		]));
+		$itemData = $item->getData();
+		$smartId = Option::get($moduleId, 'SMART_PROCESS_ID');
+		$entityId = $item->getEntityTypeId();
+		// смотрим нужный ли это смарт-процесс
+		if ((int)$smartId !== $entityId) {
+			return;
+		}
+
+		// получаем допустимые значения поля "Выполненные сценарии обработки ИИ"
+		$statusAiField = Option::get($moduleId, 'AI_WORK_STATUS_FIELD');
+		$statusAI = Option::get($moduleId, 'AI_WORK_STATUS');
+		$arStatusesAI = explode(',', $statusAI);
+		$arStatusesAI = array_map(function ($v) {
+			return trim($v);
+		}, $arStatusesAI);
+
+		// получаем допустимую для отправки в ИИ стадию заявки
+		$enableStage = Option::get($moduleId, 'ENABLE_STAGE');
+
+		// получаем допустимые значения поля "Направление деятельности"
+		$workDirectionField = Option::get($moduleId, 'WORK_DIRECTION_FIELD');
+		$workDirection = Option::get($moduleId, 'WORK_DIRECTION');
+		$arWorkDirection = explode(',', $workDirection);
+		$arWorkDirection = array_map(function ($v) {
+			return trim($v);
+		}, $arWorkDirection);
+
+		// поле ссылки проверки документов
+		$linkDocumentsField = Option::get($moduleId, 'LINK_DOCUMENTS_FIELD');
+
+		// поле с файлами
+		$filesField = Option::get($moduleId, 'FILES_FIELD_NAME');
+
+		$debugInfo = Loc::getMessage(
+			'TENDER_DEBUG_INFO_METHOD',
+			['#METHOD#' => __METHOD__]);
+		// Выполненные сценарии обработки ИИ
+		if (!empty($itemData[$statusAiField])) {
+			if (is_array($itemData[$statusAiField]) && !empty(array_intersect($itemData[$statusAiField], $arStatusesAI))) {
+				Debug::writeToFile(
+					$debugInfo . " | Error: " . Loc::getMessage('TENDER_DEBUG_AI_WORK_PROCESS_ERROR'),
+					"AI_TRACE",
+					"tender_rest.log"
+				);
+				return;
+			}
+			if (!is_array($itemData[$statusAiField]) && in_array($itemData[$statusAiField], $arStatusesAI)) {
+				Debug::writeToFile(
+					$debugInfo . " | Error: " . Loc::getMessage('TENDER_DEBUG_AI_WORK_PROCESS_ERROR'),
+					"AI_TRACE",
+					"tender_rest.log"
+				);
+				return;
+			}
+		}
+
+		// проверяем стадию
+		if ($itemData['STAGE_ID'] !== $enableStage) {
+			Debug::writeToFile(
+				$debugInfo . " | Error: " . Loc::getMessage('TENDER_UNAVAILABLE_STAGE_ERROR'),
+				"AI_TRACE",
+				"tender_rest.log"
+			);
+			return;
+		}
+
+		// проверяем направление деятельности
+		if (empty($itemData[$workDirectionField]))
+		{
+			Debug::writeToFile(
+				$debugInfo . " | Error: " . Loc::getMessage('TENDER_EMPTY_WORK_DIRECTION_ERROR'),
+				"AI_TRACE",
+				"tender_rest.log"
+			);
+			return;
+		}
+		if (is_array($itemData[$workDirectionField]) && empty(array_intersect($itemData[$workDirectionField], $arWorkDirection)))
+		{
+			Debug::writeToFile(
+				$debugInfo . " | Error: " . Loc::getMessage('TENDER_EMPTY_WORK_DIRECTION_ERROR'),
+				"AI_TRACE",
+				"tender_rest.log"
+			);
+			return;
+		}
+		if (!is_array($itemData[$workDirectionField]) && !in_array($itemData[$workDirectionField], $arWorkDirection))
+		{
+			Debug::writeToFile(
+				$debugInfo . " | Error: " . Loc::getMessage('TENDER_EMPTY_WORK_DIRECTION_ERROR'),
+				"AI_TRACE",
+				"tender_rest.log"
+			);
+			return;
+		}
+
+		// проверяем ссылки на документы
+		if (empty($itemData[$linkDocumentsField])) {
+			if (empty($itemData[$filesField])) {
+				Debug::writeToFile(
+					$debugInfo . " | Error: " . Loc::getMessage('TENDER_EMPTY_FILE_FIELDS_ERROR'),
+					"AI_TRACE",
+					"tender_rest.log"
+				);
+				return;
+			}
+		}
+
+		self::onAfterUpdate($item->getId());
 	}
 }

@@ -11,15 +11,92 @@ use Bitrix\Disk\Folder;
 use Bitrix\Disk\Internals\Error\ErrorCollection;
 use Bitrix\Disk\Sharing;
 use Bitrix\Main\ArgumentException;
+use Bitrix\Main\Config\Option;
 use Bitrix\Main\Engine\CurrentUser;
 use Bitrix\Main\EventManager;
 use Bitrix\Main\Localization\Loc;
 
 require_once($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/include/prolog_before.php");
 
-\Bitrix\Main\Loader::includeModule('faleev.faleev.tender');
-$options = \Bitrix\Main\Config\Option::getForModule('faleev.faleev.tender');
-print '<pre>' . print_r($options, true) . '</pre>';
+$moduleId = 'faleev.tender';
+\Bitrix\Main\Loader::includeModule('faleev.tender');
+$itemData = json_decode(file_get_contents($_SERVER['DOCUMENT_ROOT'] . '/local/test_3.json'), true)[1];
+$options = Option::getForModule('faleev.tender');
+$smartId = Option::get($moduleId, 'SMART_PROCESS_ID');
+$entityId = 1186;
+
+// получаем допустимые значения поля "Выполненные сценарии обработки ИИ"
+$statusAiField = Option::get($moduleId, 'AI_WORK_STATUS_FIELD');
+$statusAI = Option::get($moduleId, 'AI_WORK_STATUS');
+$arStatusesAI = explode(',', $statusAI);
+$arStatusesAI = array_map(function ($v) {
+	return trim($v);
+}, $arStatusesAI);
+
+// получаем допустимую для отправки в ИИ стадию заявки
+$enableStage = Option::get($moduleId, 'ENABLE_STAGE');
+
+// получаем допустимые значения поля "Направление деятельности"
+$workDirectionField = Option::get($moduleId, 'WORK_DIRECTION_FIELD');
+$workDirection = Option::get($moduleId, 'WORK_DIRECTION');
+$arWorkDirection = explode(',', $workDirection);
+$arWorkDirection = array_map(function ($v) {
+	return trim($v);
+}, $arWorkDirection);
+
+// поле ссылки проверки документов
+$linkDocumentsField = Option::get($moduleId, 'LINK_DOCUMENTS_FIELD');
+
+// поле с файлами
+$filesField = Option::get($moduleId, 'FILES_FIELD_NAME');
+
+if ($entityId === (int)$smartId) {
+	// Выполненные сценарии обработки ИИ
+	if (!empty($itemData[$statusAiField])) {
+		if (is_array($itemData[$statusAiField]) && !empty(array_intersect($itemData[$statusAiField], $arStatusesAI))) {
+			echo 'Найдены совпадения массива массивов';
+			die();
+		}
+		if (!is_array($itemData[$statusAiField]) && in_array($itemData[$statusAiField], $arStatusesAI)) {
+			echo 'Найдена строка статуса в массиве';
+			die();
+		}
+	}
+
+	// проверяем стадию
+	if ($itemData['STAGE_ID'] !== $enableStage) {
+		echo 'Стадия не соотвествует заявленной';
+		die();
+	}
+
+	// проверяем направление деятельности
+	if (empty($itemData[$workDirectionField]))
+	{
+		echo 'Направление деятельности не заполнено';
+		die();
+	}
+	if (is_array($itemData[$workDirectionField]) && empty(array_intersect($itemData[$workDirectionField], $arWorkDirection)))
+	{
+		echo 'not array in array';
+		die();
+	}
+	if (!is_array($itemData[$workDirectionField]) && !in_array($itemData[$workDirectionField], $arWorkDirection))
+	{
+		echo 'not string in array';
+		die();
+	}
+
+	// проверяем ссылки на документы
+	if (empty($itemData[$linkDocumentsField])) {
+		if (empty($itemData[$filesField])) {
+			echo 'Ни поле, ни что либо другое не заполнено';
+			die();
+		}
+	}
+
+	echo 'Запрос отправлен';
+}
+
 die();
 \Bitrix\Main\Loader::includeModule('crm');
 

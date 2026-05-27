@@ -8,7 +8,7 @@ Extension::load(['ui.design-tokens', 'ui.fonts.opensans', 'ui.buttons', 'ui.aler
 
 /**
  * Здесь будет подключаться ваш скомпилированный JS (React/Vue)
- * Например: Asset::getInstance()->addJs('/local/modules/faleev.faleev.tender/frontend/dist/app.js');
+ * Например: Asset::getInstance()->addJs('/local/modules/faleev.tender/frontend/dist/app.js');
  */
 ?>
 
