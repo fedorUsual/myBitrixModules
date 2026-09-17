@@ -42,22 +42,9 @@ if (Loader::includeModule('faleev.tender')) {
         die();
     }
 
-	/** todo:: удалить полностью, если все будет отрабатывать нормально без вебхука*/
-	/*// 4. ОБРАБОТКА SYNC ОТ РОБОТОВ/СЦЕНАРИЕВ (Отправка в ИИ)
-	// URL: /faleev.tender/index.php?document_id={{ID}}
-	if (isset($_REQUEST['document_id'])) {
-		$APPLICATION->RestartBuffer();
-		header('Content-Type: application/json');
-		echo json_encode($ajax->syncAction());
-		die();
-	}*/
-
     // 5. ОТОБРАЖЕНИЕ ИНТЕРФЕЙСА (Для человека)
     echo (new AppController())->renderAction();
 
 } else {
     echo "Ошибка: Модуль 'faleev.tender' не установлен.";
 }
-
-//require($_SERVER["DOCUMENT_ROOT"]."/bitrix/footer.php");
-

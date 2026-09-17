@@ -157,10 +157,10 @@ class LogHandler
             $res = $operation->launch();
 
             // 4. ПИНГ ТРИГГЕРА (через ваш проверенный HttpClient)
-	        $entityId = $options['smart_process_id'];
-            $triggerUrl = Config::getHostUrl() . "/rest/608/b9643sh3r8z1qfs8/crm.automation.trigger/?target=DYNAMIC_{$entityId}_{$itemId}&code=6py38";
-            $http = new HttpClient();
-            $http->get($triggerUrl);
+//	        $entityId = $options['smart_process_id'];
+//            $triggerUrl = Config::getHostUrl() . "/rest/608/b9643sh3r8z1qfs8/crm.automation.trigger/?target=DYNAMIC_{$entityId}_{$itemId}&code=6py38";
+//            $http = new HttpClient();
+//            $http->get($triggerUrl);
 
             // 5. ЛОГИРОВАНИЕ
             Debug::writeToFile(

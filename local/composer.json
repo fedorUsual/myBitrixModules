@@ -11,7 +11,8 @@
         }
     },
     "require": {
-        "openspout/openspout": "^4.15"
+        "openspout/openspout": "^4.15",
+        "webklex/php-imap": "^6.2"
     },
     "autoload": {
         "psr-4": {

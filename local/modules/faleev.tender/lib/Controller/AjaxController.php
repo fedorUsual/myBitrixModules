@@ -62,47 +62,6 @@ class AjaxController extends Controller
             ],
         ];
     }
-	/** todo:: удалить полностью, если все будет отрабатывать нормально без вебхука*/
-/*
-    public function syncAction()
-    {
-        $request = $this->getRequest();
-        $uri = $request->getRequestUri();
-
-        // Парсим document_id из строки запроса вручную
-        parse_str(parse_url($uri, PHP_URL_QUERY), $queryParams);
-        $itemId = isset($queryParams['document_id']) ? (int)$queryParams['document_id'] : 0;
-
-        Debug::writeToFile(
-            "SYNC_START | URI: {$uri} | document_id: {$itemId}",
-            "TENDER_DEBUG",
-            "tender_rest.log"
-        );
-
-        if ($itemId <= 0) {
-            $postData = $request->getPostList()->toArray();
-            $itemId = (int)($postData['data']['FIELDS']['ID'] ?? $postData['document_id'] ?? 0);
-        }
-
-        // Логируем для отладки
-        Debug::writeToFile(
-            "SYNC_START | ID: " . $itemId,
-            "TENDER_DEBUG",
-            "tender_rest.log"
-        );
-
-        if ($itemId > 0) {
-            Loader::includeModule('crm');
-            Loader::includeModule('faleev.tender');
-
-            // Передаем ID в Handler. Теперь он найдет Item 3057 и отправит в ИИ.
-            LogHandler::onAfterUpdate($itemId);
-
-            return ['status' => 'success', 'id' => $itemId];
-        }
-
-        return ['status' => 'error', 'message' => 'No valid ID found'];
-    }*/
 
     /**
      * Основной метод обработки колбэка от нейросети/внешнего сервиса
@@ -151,26 +110,28 @@ class AjaxController extends Controller
             $item->set($options['field_error'], $isCompleted ? "" : ($data['error_message'] ?? ''));
 	        // 3. ОБРАБОТКА ФАЙЛА
 			if (!empty($data['table_tender'])) {
-				require_once($_SERVER["DOCUMENT_ROOT"] . "/local/vendor/autoload.php");
-				$diskFileId = $this->generateExcelAndSaveToDisk($data['table_tender'], $tenderId);
-				if ($diskFileId) {
-					$diskFile = File::loadById($diskFileId);
-					if ($diskFile) {
-						$bFileId = (int)$diskFile->getFileId();
-						$bFile = \CFile::MakeFileArray($bFileId);
-						$fieldName = $options['field_table_tender'];
+				if (is_dir($_SERVER["DOCUMENT_ROOT"] . "/local/vendor")) {
+					require_once($_SERVER["DOCUMENT_ROOT"] . "/local/vendor/autoload.php");
+					$diskFileId = $this->generateExcelAndSaveToDisk($data['table_tender'], $tenderId);
+					if ($diskFileId) {
+						$diskFile = File::loadById($diskFileId);
+						if ($diskFile) {
+							$bFileId = (int)$diskFile->getFileId();
+							$bFile = \CFile::MakeFileArray($bFileId);
+							$fieldName = $options['field_table_tender'];
 
-						$fileField = $factory->getFieldsCollection()->getField($fieldName);
-						$fileUploader = $container->getFileUploader();
-						$checkResult = $fileUploader->checkFile($fileField, $bFile);
-						if (!$checkResult->isSuccess())
-						{
-							throw new Exception(implode(',' . PHP_EOL, $checkResult->getErrorMessages()));
+							$fileField = $factory->getFieldsCollection()->getField($fieldName);
+							$fileUploader = $container->getFileUploader();
+							$checkResult = $fileUploader->checkFile($fileField, $bFile);
+							if (!$checkResult->isSuccess())
+							{
+								throw new Exception(implode(',' . PHP_EOL, $checkResult->getErrorMessages()));
+							}
+
+							$savedFileId = $fileUploader->saveFilePersistently($fileField, $bFile);
+
+							$item->set($fieldName, $savedFileId);
 						}
-
-						$savedFileId = $fileUploader->saveFilePersistently($fileField, $bFile);
-
-						$item->set($fieldName, $savedFileId);
 					}
 				}
 			}
@@ -207,7 +168,9 @@ class AjaxController extends Controller
             $USER->Logout();
 
             if ($result->isSuccess()) {
-                if ($isCompleted) { $this->fireAutomationTrigger($tenderId); }
+//                if ($isCompleted) {
+//					$this->fireAutomationTrigger($tenderId);
+//				}
                 return ['status' => 'success'];
             }
 
@@ -635,19 +598,19 @@ class AjaxController extends Controller
         $entityId = $options['smart_process_id'];
         $triggerCode = $options['trigger_code'] ?? "6py38";
 
-        // Формируем проверенный URL
-        $triggerUrl = Config::getHostUrl() . "/rest/608/b9643sh3r8z1qfs8/crm.automation.trigger/?" . http_build_query([
-            'target' => "DYNAMIC_{$entityId}_{$id}",
-            'code' => $triggerCode
-        ]);
+//        // Формируем проверенный URL
+//        $triggerUrl = Config::getHostUrl() . "/rest/608/b9643sh3r8z1qfs8/crm.automation.trigger/?" . http_build_query([
+//            'target' => "DYNAMIC_{$entityId}_{$id}",
+//            'code' => $triggerCode
+//        ]);
 
-        // Асинхронный вызов через HttpClient
-        $httpClient = new HttpClient();
-        $httpClient->setTimeout(5);
-        $httpClient->get($triggerUrl);
+//        // Асинхронный вызов через HttpClient
+//        $httpClient = new HttpClient();
+//        $httpClient->setTimeout(5);
+//        $httpClient->get($triggerUrl);
 
-        // Логируем для уверенности, что ссылка сформирована верно
-        Debug::writeToFile("Trigger fired: " . $triggerUrl, "TRIGGER_DEBUG", "tender_rest.log");
+//        // Логируем для уверенности, что ссылка сформирована верно
+//        Debug::writeToFile("Trigger fired: " . $triggerUrl, "TRIGGER_DEBUG", "tender_rest.log");
     }
 
 }

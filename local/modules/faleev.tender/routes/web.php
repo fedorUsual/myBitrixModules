@@ -16,7 +16,6 @@ return function (RoutingConfigurator $routes) {
 		/** todo:: образец для использования */
 		$routes->get('new/{id}', [AuthController::class, 'getTenderById'])
 			->name('getTenderById');
-		$routes->any('sync/', [AjaxController::class, 'sync']);
 		$routes->get('test/', [AppController::class, 'test']);
 		$routes->get('subscribe/', [AppController::class, 'subscribe']);
 	});

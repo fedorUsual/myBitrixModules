@@ -1,4 +1,5 @@
 <?php
+
 use Bitrix\Main\ModuleManager;
 use Bitrix\Main\EventManager;
 use CAgent;
@@ -72,12 +73,12 @@ class faleev_tender extends CModule // Имя класса обычно совп
         // Смарт-процессы
         $eventManager->registerEventHandler(
             'crm', 'OnCrmDynamicItemAdd',
-	        $this->MODULE_ID, '\Faleev\Tender\Handlers\LogHandler', 'onDynamicAdd'
+	        $this->MODULE_ID, LogHandler::class, 'onDynamicAdd'
         );
         // Смарт-процессы
         $eventManager->registerEventHandler(
             'crm', 'OnCrmDynamicItemUpdate',
-	        $this->MODULE_ID, \Faleev\Tender\Handlers\LogHandler::class, 'onDynamicAdd'
+	        $this->MODULE_ID, LogHandler::class, 'onDynamicAdd'
         );
     }
 
