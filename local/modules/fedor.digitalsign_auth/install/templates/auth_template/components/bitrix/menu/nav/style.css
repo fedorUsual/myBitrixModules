@@ -1,0 +1,43 @@
+.nav-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.nav-list li {
+    position: relative;
+}
+
+.nav-sublist {
+    display: none;
+    list-style: none;
+    padding-left: 0;
+    margin-left: 20px;
+    margin-top: -10px;
+    margin-bottom: 10px;
+}
+
+.nav-sublist.open {
+    display: block;
+}
+
+.nav-list li:hover > .nav-sublist {
+    display: block;
+}
+
+.nav-subitem {
+    display: block;
+    padding: 5px 10px;
+    font-size: 0.9em;
+    text-decoration: none;
+    color: #2e3a4c;
+}
+
+.nav-subitem:hover {
+    color: #D9D9D9;
+    text-decoration: none;
+}
+
+#nav.thin .nav-list li:hover > .nav-sublist {
+    display: none !important;
+}

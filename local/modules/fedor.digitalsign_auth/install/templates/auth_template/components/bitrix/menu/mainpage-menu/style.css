@@ -1,0 +1,131 @@
+/* Общие стили для карточек */
+.main-menu-page.cards {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 20px;
+	justify-content: flex-start; /* Ставим карточки слева */
+	padding: 20px 0;
+}
+
+.main-menu-page .cards__item {
+	flex: 1 1 calc(33.333% - 20px);
+	max-width: calc(33.333% - 20px);
+}
+
+.main-menu-page .card {
+	position: relative;
+	width: 100%;
+	min-height: 260px;
+	will-change: transform;
+	z-index: 2;
+	background-color: #ffffff;
+	border-radius: 10px;
+	padding: 20px;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+.main-menu-page .card:before {
+	background-color: #fff;
+	border-radius: 10px;
+	content: "";
+	height: 100%;
+	left: 15px;
+	opacity: .6;
+	position: absolute;
+	right: 15px;
+	top: -10px;
+	transition: transform .4s ease-in-out;
+	z-index: -1;
+}
+.main-menu-page .card:hover:before {
+	transform: rotate(-4deg);
+}
+
+.main-menu-page .card__title {
+	font-size: 1.4em;
+	font-weight: bold;
+	color: #1d2b4f;
+	margin-bottom: 12px;
+	text-underline: none;
+}
+.main-menu-page .card:hover .card__title,
+.main-menu-page .card__title:hover{
+	color: #00A1AB;
+	text-decoration: none;
+}
+.main-menu-page .card__list {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+
+.main-menu-page .card__list-item {
+	font-size: 1em;
+	color: #4a5a7a;
+	margin-bottom: 10px;
+	text-underline: none;
+	display: none; /* По умолчанию скрываем все */
+}
+.main-menu-page .card__list-item:hover{
+	text-decoration: none;
+	color: #00A1AB;
+}
+.main-menu-page .card__list-item:nth-child(-n+3) {
+	display: block; /* Показываем только первые три */
+}
+
+.main-menu-page .card__list-item--more {
+	display: flex;
+	align-items: center;
+	color: #6a7b9a;
+	font-weight: bold;
+	cursor: pointer;
+	text-underline: none;
+}
+
+.icon-arrow {
+	position: relative;
+	font-size: 1em;
+	margin-left: 6px;
+	color: #6a7b9a;
+	top: 2px;
+	transition: transform 0.3s ease; /* Анимация для стрелки */
+}
+
+.main-menu-page .card__list-item--more:hover,
+.main-menu-page .card__list-item--more:hover .icon-arrow{
+	text-decoration: none;
+	color: #00A1AB;
+}
+
+
+
+/* Анимация стрелки при наведении и клике */
+.main-menu-page .card__list-item--more:hover .icon-arrow,
+.main-menu-page .card__list-item--more:active .icon-arrow {
+	transform: translateX(5px);
+}
+
+/* Адаптивность */
+@media (max-width: 1024px) {
+	.main-menu-page .cards__item {
+		flex: 1 1 calc(50% - 20px);
+		max-width: calc(50% - 20px);
+	}
+	.main-menu-page .card:before {
+		right: 15px;
+	}
+}
+
+@media (max-width: 768px) {
+	.main-menu-page .cards {
+		flex-direction: column;
+	}
+
+	.main-menu-page .cards__item {
+		flex: 1 1 100%;
+		max-width: 100%;
+	}
+	.main-menu-page .card:before {
+		right: 30px;
+	}
+}

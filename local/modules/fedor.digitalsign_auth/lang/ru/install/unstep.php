@@ -1,0 +1,4 @@
+<?php
+$MESS["FEDOR_CRYPTOPRO_UNSTEP_BEFORE"] = "Модуль";
+$MESS["FEDOR_CRYPTOPRO_UNSTEP_AFTER"] = "удален";
+$MESS["FEDOR_CRYPTOPRO_UNSTEP_SUBMIT_BACK"] = "Вернуться в список";
