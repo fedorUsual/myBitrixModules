@@ -1,0 +1,7 @@
+.env
+/bitrix
+!/bitrix/.settings_extra.php
+/local/composer.json
+/local/composer.lock
+/local/test*
+/local/modules/faleev.tender

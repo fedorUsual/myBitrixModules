@@ -8,12 +8,6 @@ use Bitrix\Main\Localization\Loc;
 Loc::loadMessages(__FILE__);
 /** @global $APPLICATION */
 
-//ссылка подключает файл именно из главного модуля, если данный модуль не главный, то не надо менять на подключение из
-// текущего. Менять нужно только в случае, если главный модуль по другому называется
-include_once $_SERVER['DOCUMENT_ROOT'] . '/local/modules/fedor.taskpermissions/functions_for_options_page.php';
-include_once $_SERVER['DOCUMENT_ROOT'] . '/local/modules/fedor.taskpermissions/LabelWithPlaceholdersSpoiler.php';
-
-
 $request = HttpApplication::getInstance()->getContext()->getRequest();
 
 $module_id = htmlspecialcharsbx($request["mid"] != "" ? $request["mid"] : $request["id"]);

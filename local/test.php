@@ -18,6 +18,53 @@ use Bitrix\Main\Localization\Loc;
 
 require_once($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/include/prolog_before.php");
 
+$title = 'AI ассистент';
+$handler = getenv('AI_ASSIST_URL');
+$data = [
+	[
+		'method' => 'placement.bind',
+		'params' => [
+			"PLACEMENT" => getenv('ITR_APPLICATION_AI_PLACEMENT'),
+			"HANDLER"   => $handler,
+			"TITLE"     => $title,
+		]
+	],
+	[
+		'method' => 'placement.bind',
+		'params' => [
+			"PLACEMENT" => getenv('LEFT_MENU_AI_PLACEMENT'),
+			"HANDLER"   => $handler,
+			"TITLE"     => $title,
+		]
+	],
+	[
+		'method' => 'placement.bind',
+		'params' => [
+			"PLACEMENT" => getenv('TASK_VIEW_AI_PLACEMENT'),
+			"HANDLER"   => $handler,
+			"TITLE"     => $title,
+		]
+	],
+	[
+		'method' => 'placement.bind',
+		'params' => [
+			"PLACEMENT" => getenv('ITR_PROJECTS_AI_PLACEMENT'),
+			"HANDLER"   => $handler,
+			"TITLE"     => $title,
+		]
+	],
+	[
+		'method' => 'placement.bind',
+		'params' => [
+			"PLACEMENT" => getenv('COMPANY_AI_PLACEMENT'),
+			"HANDLER"   => $handler,
+			"TITLE"     => $title,
+		]
+	],
+];
+
+print '<pre>' . print_r($data, true) . '</pre>';
+die();
 $moduleId = 'faleev.tender';
 \Bitrix\Main\Loader::includeModule('faleev.tender');
 $itemData = json_decode(file_get_contents($_SERVER['DOCUMENT_ROOT'] . '/local/test_3.json'), true)[1];

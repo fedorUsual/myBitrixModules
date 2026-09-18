@@ -7,6 +7,28 @@ use Bitrix\Main\Text\StringHelper;
 
 $root = Application::getDocumentRoot();
 
+// Подключаем файл окружения и парсим его, чтобы не зависеть от сторонних библиотек
+$envFile = $root . '/.env';
+if (file_exists($envFile)) {
+	$lines = file($envFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+	foreach ($lines as $line) {
+		if (strpos(trim($line), '#') === 0) {
+			continue;
+		}
+
+		list($name, $value) = explode('=', $line, 2) + [null, null];
+		if ($name !== null && $value !== null) {
+			$name = trim($name);
+			$value = trim($value, " \t\n\r\0\x0B\"'");
+
+			// Записываем в окружение
+			$_ENV[$name] = $value;
+			$_PUTENV = putenv("$name=$value");
+			$_SERVER[$name] = $value;
+		}
+	}
+}
+
 // Подключаем файл CalendarInfoblocAdd.php и запускаем скрипт, который лежит в файле CalendarInfoblocAdd.php
 require dirname(__FILE__). '/CalendarInfoblocAdd.php';
 

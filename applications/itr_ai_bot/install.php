@@ -2,12 +2,12 @@
 require_once (__DIR__.'/crest.php');
 $result = CRest::installApp();
 $title = 'AI ассистент';
-$handler = 'https://tk.tandem-consult.ru/applications/itr_ai_bot/index.php';
+$handler = getenv('AI_ASSIST_URL');
 $data = [
         [
                 'method' => 'placement.bind',
                 'params' => [
-                        "PLACEMENT" => "CRM_DYNAMIC_1186_DETAIL_TAB",
+                        "PLACEMENT" => getenv('ITR_APPLICATION_AI_PLACEMENT'),
                         "HANDLER"   => $handler,
                         "TITLE"     => $title,
                 ]
@@ -15,7 +15,7 @@ $data = [
         [
                 'method' => 'placement.bind',
                 'params' => [
-                        "PLACEMENT" => "LEFT_MENU",
+                        "PLACEMENT" => getenv('LEFT_MENU_AI_PLACEMENT'),
                         "HANDLER"   => $handler,
                         "TITLE"     => $title,
                 ]
@@ -23,7 +23,7 @@ $data = [
         [
                 'method' => 'placement.bind',
                 'params' => [
-                        "PLACEMENT" => "TASK_VIEW_TAB",
+                        "PLACEMENT" => getenv('TASK_VIEW_AI_PLACEMENT'),
                         "HANDLER"   => $handler,
                         "TITLE"     => $title,
                 ]
@@ -31,7 +31,7 @@ $data = [
         [
                 'method' => 'placement.bind',
                 'params' => [
-                        "PLACEMENT" => "CRM_DYNAMIC_1046_DETAIL_TAB",
+                        "PLACEMENT" => getenv('ITR_PROJECTS_AI_PLACEMENT'),
                         "HANDLER"   => $handler,
                         "TITLE"     => $title,
                 ]
@@ -39,7 +39,7 @@ $data = [
         [
                 'method' => 'placement.bind',
                 'params' => [
-                        "PLACEMENT" => "CRM_COMPANY_DETAIL_TAB",
+                        "PLACEMENT" => getenv('COMPANY_AI_PLACEMENT'),
                         "HANDLER"   => $handler,
                         "TITLE"     => $title,
                 ]
