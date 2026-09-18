@@ -14,3 +14,7 @@
 /*.php
 /applications/itr_ai_bot/settings.json
 /applications/itr_ai_bot/settings.php
+/local/php_interface/include
+/local/php_interface/user_lang
+/local/php_interface/init.php
+.htaccess
