@@ -5,3 +5,4 @@
 /local/composer.lock
 /local/test*
 /local/modules/faleev.tender
+*.log
