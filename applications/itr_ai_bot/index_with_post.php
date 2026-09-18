@@ -7,18 +7,6 @@ $result = CRestCurrent::call('user.current');
 
 $sharedSecret = defined('C_REST_CLIENT_SECRET') ? C_REST_CLIENT_SECRET : '';
 
-// --- ТЕСТОВЫЕ ДАННЫЕ (заменить на реальные) -----------------------------
-// В реальной интеграции здесь должен быть результат REST-вызова
-// user.current (или user.get) с использованием $_REQUEST['AUTH_ID'],
-// который Bitrix24 присылает при каждой загрузке placement.
-// Пример:
-//   $authId = $_REQUEST['AUTH_ID'] ?? null;
-//   $domain = $_REQUEST['DOMAIN'] ?? null;
-//   $ch = curl_init("https://{$domain}/rest/user.current?auth={$authId}");
-//   curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-//   $userData = json_decode(curl_exec($ch), true)['result'] ?? [];
-//   $userId = $userData['ID'] ?? null;
-//   $email  = $userData['EMAIL'] ?? null;
 $userId = $result['result']['ID'];
 $email  = $result['result']['EMAIL'];
 // -------------------------------------------------------------------------

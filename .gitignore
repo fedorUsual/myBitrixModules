@@ -12,3 +12,5 @@
 /local/logs
 /tender
 /*.php
+/applications/itr_ai_bot/settings.json
+/applications/itr_ai_bot/settings.php
