@@ -1,0 +1,4 @@
+<?php
+$MESS["FEDOR_CRYPTOPRO_STEP_BEFORE"] = "Модуль";
+$MESS["FEDOR_CRYPTOPRO_STEP_AFTER"] = "установлен";
+$MESS["FEDOR_CRYPTOPRO_STEP_SUBMIT_BACK"] = "Вернуться в список";

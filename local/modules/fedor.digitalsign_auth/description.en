@@ -1,0 +1,3 @@
+This module enables public site authorization using a digital signature instead of standard login/password or LDAP authentication.
+
+Upon accessing the sign-in page, the system scans available digital signatures on the user's device, allowing them to select the signature to log in with.

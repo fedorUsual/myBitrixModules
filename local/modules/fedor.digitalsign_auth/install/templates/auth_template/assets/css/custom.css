@@ -1,0 +1,8 @@
+.tablebodytext{
+    /*TODO: Временно, пока не активируем лицензию*/
+    display: none;
+}
+
+#bx-panel .adm-warning-block {
+    display: none !important;
+}
