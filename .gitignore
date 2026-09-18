@@ -1,4 +1,6 @@
 .env
+.idea
+.git
 /bitrix
 !/bitrix/.settings_extra.php
 /local/composer.json
@@ -6,3 +8,7 @@
 /local/test*
 /local/modules/faleev.tender
 *.log
+/local/js/bestrank
+/local/logs
+/tender
+/*.php
