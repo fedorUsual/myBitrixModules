@@ -1,15 +1,14 @@
 <?php
 require_once (__DIR__.'/crestcurrent.php');
 require_once (__DIR__.'/settings.php');
+require_once('crest.php');
 
-    //$result = CRest::call('user.current');
 $result = CRestCurrent::call('user.current');
 
 $sharedSecret = defined('C_REST_CLIENT_SECRET') ? C_REST_CLIENT_SECRET : '';
 
 $userId = $result['result']['ID'];
 $email  = $result['result']['EMAIL'];
-// -------------------------------------------------------------------------
 
 $timestamp = time();
 
@@ -54,7 +53,6 @@ require_once('crest.php');
 
         <script>
             BX24.init(function () {
-                // Отправляем подписанные данные во фрейм POST-ом
                 document.getElementById('itraiPostForm').submit();
 
                 BX24.fitWindow();
