@@ -1,13 +1,15 @@
 <?php
 require_once (__DIR__.'/crest.php');
+require_once (__DIR__.'/settings.php');
+
 $result = CRest::installApp();
 $title = 'AI ассистент';
-$handler = getenv('AI_ASSIST_URL');
+$handler = AI_ASSIST_URL;
 $data = [
         [
                 'method' => 'placement.bind',
                 'params' => [
-                        "PLACEMENT" => getenv('ITR_APPLICATION_AI_PLACEMENT'),
+                        "PLACEMENT" => ITR_APPLICATION_AI_PLACEMENT,
                         "HANDLER"   => $handler,
                         "TITLE"     => $title,
                 ]
@@ -15,7 +17,7 @@ $data = [
         [
                 'method' => 'placement.bind',
                 'params' => [
-                        "PLACEMENT" => getenv('LEFT_MENU_AI_PLACEMENT'),
+                        "PLACEMENT" => LEFT_MENU_AI_PLACEMENT,
                         "HANDLER"   => $handler,
                         "TITLE"     => $title,
                 ]
@@ -23,7 +25,7 @@ $data = [
         [
                 'method' => 'placement.bind',
                 'params' => [
-                        "PLACEMENT" => getenv('TASK_VIEW_AI_PLACEMENT'),
+                        "PLACEMENT" => TASK_VIEW_AI_PLACEMENT,
                         "HANDLER"   => $handler,
                         "TITLE"     => $title,
                 ]
@@ -31,7 +33,7 @@ $data = [
         [
                 'method' => 'placement.bind',
                 'params' => [
-                        "PLACEMENT" => getenv('ITR_PROJECTS_AI_PLACEMENT'),
+                        "PLACEMENT" => ITR_PROJECTS_AI_PLACEMENT,
                         "HANDLER"   => $handler,
                         "TITLE"     => $title,
                 ]
@@ -39,7 +41,7 @@ $data = [
         [
                 'method' => 'placement.bind',
                 'params' => [
-                        "PLACEMENT" => getenv('COMPANY_AI_PLACEMENT'),
+                        "PLACEMENT" => COMPANY_AI_PLACEMENT,
                         "HANDLER"   => $handler,
                         "TITLE"     => $title,
                 ]
