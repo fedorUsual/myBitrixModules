@@ -3,9 +3,11 @@
 namespace Fedor\Htmlfieldtype\UserType;
 
 use Bitrix\Main\Loader;
+use Bitrix\Main\UserField\Types\BaseType;
 use CFileMan;
+use CUserTypeManager;
 
-class CUserTypeHtml
+class CUserTypeHtml extends BaseType
 {
     public static function GetUserTypeDescription(): array
     {
@@ -13,7 +15,7 @@ class CUserTypeHtml
             "USER_TYPE_ID" => 'fedor_htmlfieldtype',
             "CLASS_NAME" => __CLASS__,
             "DESCRIPTION" => 'HTML (fedor.htmlfieldtype)',
-            "BASE_TYPE" => \CUserTypeManager::BASE_TYPE_STRING,
+            "BASE_TYPE" => CUserTypeManager::BASE_TYPE_STRING,
             "EDIT_CALLBACK" => [__CLASS__, 'GetPublicEdit'],
             "VIEW_CALLBACK" => [__CLASS__, 'GetPublicView'],
         );
@@ -24,7 +26,7 @@ class CUserTypeHtml
         return "text";
     }
 
-    public function getSettingsHtml($userField, $additionalParameters, $varsFromForm): string
+    public static function getSettingsHtml($userField, $additionalParameters, $varsFromForm): string
     {
         return
             '<div class="adm-info-message-wrap" align="center">' .
@@ -32,21 +34,21 @@ class CUserTypeHtml
             '</div>';
     }
 
-    public static function GetPublicView($arUserField, $arAdditionalParameters = array())
+    public static function GetPublicView($userField, $additionalParameters = array()): string
     {
-		echo $arUserField['VALUE'];
+		echo $userField['VALUE'];
 		$html = ob_get_clean();
         return "<div class='ui-entity-editor-content-block-inner-html'>$html</div>";
     }
 
-    public static function GetPublicEdit($arUserField, $arAdditionalParameters = array())
+    public static function GetPublicEdit($userField, $additionalParameters = array()): string
     {
         Loader::includeModule("fileman");
 		ob_start();
         CFileMan::AddHTMLEditorFrame(
-                $arUserField['FIELD_NAME'],
-                $arUserField['VALUE'],
-                $arUserField['FIELD_NAME'] . '_TYPE',
+                $userField['FIELD_NAME'],
+                $userField['VALUE'],
+                $userField['FIELD_NAME'] . '_TYPE',
                 'text',
                 array(
                         'height' => 450,
@@ -55,14 +57,14 @@ class CUserTypeHtml
         );
         ?>
             <style>
-                #bx-html-editor-<?=$arUserField['FIELD_NAME']?> {
+                #bx-html-editor-<?=$userField['FIELD_NAME']?> {
                     min-width: 100% !important;
                 }
-                #bx-html-editor-area-cnt-<?=$arUserField['FIELD_NAME']?> > * {
+                #bx-html-editor-area-cnt-<?=$userField['FIELD_NAME']?> > * {
                     width: 100% !important;
                     max-width: 100% !important;
                 }
-                #bx-html-editor-area-cnt-<?=$arUserField['FIELD_NAME']?> .bxhtmled-top-bar-cnt {
+                #bx-html-editor-area-cnt-<?=$userField['FIELD_NAME']?> .bxhtmled-top-bar-cnt {
                     width: 100% !important;
                     max-width: 100% !important;
                 }
